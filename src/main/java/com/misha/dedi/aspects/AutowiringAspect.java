@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -12,17 +13,42 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.FieldSignature;
 import org.aspectj.lang.reflect.SourceLocation;
+import org.reflections.Reflections;
 
 import com.misha.dedi.annotations.Autowired;
 import com.misha.dedi.annotations.Prototype;
+import com.misha.dedi.annotations.Qualifier;
+import com.misha.dedi.exceptions.NoSuchQualifierException;
 import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
 
 @Aspect
-public class LazyAutowiringAspect {
+public class AutowiringAspect {
     
-    private Set<SourceLocation> injected = new HashSet<>();
+    private final Set<SourceLocation> injected = new HashSet<>();
     
-    private Map<Class<?>, Object> instances = new HashMap<>();
+    private final Map<Class<?>, Object> instances = new HashMap<>();
+    
+    private final Map<String, Class<?>> qualified = new HashMap<>();
+    
+    private final Reflections reflections = new Reflections("");
+    
+    private final Logger log = Logger.getLogger("dedi");
+    
+    public AutowiringAspect() {
+        log.info("Initializing an autowiring aspect.");
+        
+        /**
+         * Initialize the set of all qualified types.
+         */
+        Set<Class<?>> qualifiedTypes = 
+            reflections.getTypesAnnotatedWith(Qualifier.class);
+        
+        for (Class<?> type : qualifiedTypes) {
+            Qualifier annotation = type.getAnnotation(Qualifier.class);
+            qualified.put(annotation.value(), type);
+            log.info("Registered qualifier \"" + annotation.value() + "\" for " + type);
+        } 
+    }
                 
     @Pointcut(
         "get(@com.misha.dedi.annotations.Autowired * *) && " +
@@ -63,7 +89,26 @@ public class LazyAutowiringAspect {
              * to be injected into the field instance.
              */
             Object target = thisJoinPoint.getTarget();
-            Class<?> type = field.getType();
+            
+            /**
+             * Figure out the correct type to use for injection, in case any
+             * qualifiers were triggered during static initialization.
+             */
+            Class<?> type = null;
+            
+            if (annotation.value().equals("")) {
+                type = field.getType();
+                
+            } else {
+                type = qualified.get(annotation.value());
+                
+                /**
+                 * Validate that we got an actual type from the qualified list.
+                 */
+                if (type == null) {
+                    throw new NoSuchQualifierException(annotation.value());
+                }
+            }
 
             /**
              * Inject a new instance for the field, checking for the prototype
@@ -71,10 +116,12 @@ public class LazyAutowiringAspect {
              */
             try {
                 if (type.getAnnotation(Prototype.class) != null) {
+                    log.info("Instantiating prototype for " + type);
                     field.set(target, type.getConstructor().newInstance());
                     
                 } else {
                     if (!instances.containsKey(type)) {
+                        log.info("Instantiating singleton for " + type);
                         instances.put(type, type.getConstructor().newInstance());
                     }
                     
