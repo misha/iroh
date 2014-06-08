@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Prototype;
+import com.misha.dedi.annotations.Component;
 
 /**
  * Tests autowiring scoping rules.
@@ -17,6 +17,7 @@ public class ScopeTest {
     @Autowired
     public SingletonObject s1;
     
+    @Component
     public static class SingletonObject {
         
     }
@@ -32,7 +33,7 @@ public class ScopeTest {
     @Autowired
     public PrototypeObject p1;
     
-    @Prototype
+    @Component(scope = "prototype")
     public static class PrototypeObject {
         
     }

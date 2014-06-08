@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Qualifier;
+import com.misha.dedi.annotations.Component;
 
 /**
  * Alright, getting pretty complicated. Tests that the qualifier annotation
@@ -13,10 +13,10 @@ import com.misha.dedi.annotations.Qualifier;
  */
 public class QualifierTest {
 
-    @Autowired("test")
+    @Autowired(qualifier = "test")
     public Qualified qualified;
     
-    @Qualifier("test")
+    @Component(qualifier = "test")
     public static class Qualified {
         
     }
@@ -30,22 +30,22 @@ public class QualifierTest {
         Assert.assertNotNull(qualified);
     }
     
-    @Autowired("A")
+    @Autowired(qualifier = "A")
     public BaseClass a;
     
-    @Autowired("B")
+    @Autowired(qualifier = "B")
     public BaseClass b;
     
     public abstract static class BaseClass {
         
     }
     
-    @Qualifier("A")
+    @Component(qualifier = "A")
     public static class AClass extends BaseClass {
         
     }
     
-    @Qualifier("B")
+    @Component(qualifier = "B")
     public static class BClass extends BaseClass {
         
     }

@@ -14,5 +14,8 @@ public @interface Autowired {
 
     /* A qualifier value for disambiguating a field in the case of multiple
      * available implementations. */
-    public String value() default "";
+    public String qualifier() default "";
+    
+    /* Whether or not this autowiring should be done lazily or not. */
+    public boolean lazy() default false;
 }

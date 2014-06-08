@@ -3,6 +3,7 @@ package com.misha.dedi.tests;
 import org.junit.Test;
 
 import com.misha.dedi.annotations.Autowired;
+import com.misha.dedi.annotations.Component;
 import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
 
 /**
@@ -14,12 +15,14 @@ public class BlockedConstructorTest {
     @Autowired
     public Container container;
     
+    @Component
     public static class Container {
         
-        @Autowired
+        @Autowired(lazy = true)
         public Dependency dependency;
     }
     
+    @Component
     public static class Dependency {
         
         public Dependency(String argument) {

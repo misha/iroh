@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.misha.dedi.annotations.Autowired;
+import com.misha.dedi.annotations.Component;
 import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
 
 /**
@@ -15,13 +16,15 @@ public class SuperClassTest {
         
     }
     
+    @Component
     public static class Sub extends Super {
         
     }
 
+    @Component
     public static class Container {
         
-        @Autowired
+        @Autowired(lazy = true)
         public Super instance;
     }
     
@@ -37,9 +40,10 @@ public class SuperClassTest {
         
     }
 
+    @Component
     public static class Container2 {
         
-        @Autowired
+        @Autowired(lazy = true)
         public Super2 instance;
     }
     
@@ -57,17 +61,19 @@ public class SuperClassTest {
         
     }
     
+    @Component
     public static class Sub3A extends Super3 {
         
     }
     
+    @Component
     public static class Sub3B extends Super3 {
         
     }
     
     public static class Container3 {
         
-        @Autowired
+        @Autowired(lazy = true)
         public Super3 instance;
     }
     
