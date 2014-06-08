@@ -6,7 +6,7 @@ package com.misha.dedi.exceptions;
  * available for autowiring, and no qualifier exists to resolve it.
  */
 @SuppressWarnings("serial")
-public class UnexpectedImplementationCountException extends Exception {
+public class UnexpectedImplementationCountException extends DediException {
 
     public UnexpectedImplementationCountException(Class<?> type, int count) {
         super("Expected exactly 1 implementation of type " + type + " but found " + count);

@@ -4,14 +4,20 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.misha.dedi.annotations.Autowired;
+import com.misha.dedi.annotations.Prototype;
 
 /**
  * Tests that objects are never autowired twice.
  */
 public class DoubleInjectionTest {
 
+    @Prototype
+    public static class Container {
+        
+    }
+    
     @Autowired
-    private Object object;
+    private Container object;
     
     @Test
     public void test() {

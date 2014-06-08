@@ -6,7 +6,7 @@ package com.misha.dedi.exceptions;
  * or otherwise blocked (in the case of a hard-coded constructor or an enum).
  */
 @SuppressWarnings("serial")
-public class NoZeroArgumentConstructorException extends Exception {
+public class NoZeroArgumentConstructorException extends DediException {
 
     public NoZeroArgumentConstructorException(Class<?> type) {
         super("No zero argument constructor was found for type " + type);
