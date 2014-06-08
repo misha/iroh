@@ -1,7 +1,9 @@
 package com.misha.dedi.aspects;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,13 +14,16 @@ import org.aspectj.lang.reflect.FieldSignature;
 import org.aspectj.lang.reflect.SourceLocation;
 
 import com.misha.dedi.annotations.Autowired;
+import com.misha.dedi.annotations.Prototype;
 import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
 
 @Aspect
-public class AutowiringAspect {
+public class LazyAutowiringAspect {
     
-    private Set<SourceLocation> injected = new HashSet<SourceLocation>();
-            
+    private Set<SourceLocation> injected = new HashSet<>();
+    
+    private Map<Class<?>, Object> instances = new HashMap<>();
+                
     @Pointcut(
         "get(@com.misha.dedi.annotations.Autowired * *) && " +
         "@annotation(annotation)")
@@ -61,10 +66,20 @@ public class AutowiringAspect {
             Class<?> type = field.getType();
 
             /**
-             * Inject a new instance for the field.
+             * Inject a new instance for the field, checking for the prototype
+             * annotation as necessary. The default scoping policy is singleton.
              */
             try {
-                field.set(target, type.getConstructor().newInstance());
+                if (type.getAnnotation(Prototype.class) != null) {
+                    field.set(target, type.getConstructor().newInstance());
+                    
+                } else {
+                    if (!instances.containsKey(type)) {
+                        instances.put(type, type.getConstructor().newInstance());
+                    }
+                    
+                    field.set(target, instances.get(type));
+                }
 
             } catch (NoSuchMethodException e) {
                 throw new NoZeroArgumentConstructorException();
