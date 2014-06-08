@@ -17,12 +17,14 @@ public class DoubleInjectionTest {
     }
     
     @Autowired
-    private Container object;
+    private Container first;
+    
+    @Autowired
+    private Container second;
     
     @Test
     public void test() {
-        Object first = object;
-        Object second = object;
-        Assert.assertTrue(first == second);
+        Assert.assertTrue(first == first);
+        Assert.assertTrue(first != second);
     }
 }
