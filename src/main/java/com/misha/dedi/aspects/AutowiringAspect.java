@@ -87,7 +87,7 @@ public class AutowiringAspect {
         }
     }
     
-    @Pointcut("execution((! AutowiringAspect).new(..))")
+    @Pointcut("execution((! AutowiringAspect).new())")
     public void onConstruction() {
         
     }
@@ -119,7 +119,7 @@ public class AutowiringAspect {
     /**
      * Injects dependencies into a field prior to accessing the field.
      */
-    @Before("onFieldAccess(annotation)")
+    @Before("onFieldAccess(annotation) && !onConstruction()")
     public void lazilyInject(
         Autowired annotation, 
         JoinPoint thisJoinPoint) 

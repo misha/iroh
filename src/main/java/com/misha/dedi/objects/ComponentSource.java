@@ -43,7 +43,7 @@ public class ComponentSource {
     }
     
     public boolean isConcrete() {
-        int modifiers = (clazz == null) ? 
+        int modifiers = (clazz != null) ? 
             clazz.getModifiers() : 
             method.getModifiers();
             
