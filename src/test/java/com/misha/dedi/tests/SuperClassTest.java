@@ -71,6 +71,7 @@ public class SuperClassTest {
         
     }
     
+    @Component
     public static class Container3 {
         
         @Autowired(lazy = true)
