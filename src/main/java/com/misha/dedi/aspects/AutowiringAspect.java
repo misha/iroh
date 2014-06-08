@@ -35,7 +35,7 @@ public class AutowiringAspect {
     private final Logger log = Logger.getLogger("dedi");
     
     public AutowiringAspect() {
-        log.info("Initializing an autowiring aspect.");
+        log.info("Initializing the autowiring aspect.");
         
         /**
          * Initialize the set of all qualified types.
