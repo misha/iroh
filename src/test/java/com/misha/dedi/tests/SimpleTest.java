@@ -13,12 +13,6 @@ public class SimpleTest {
     @Autowired
     private Dependency dependency;
     
-    @Test
-    public void test() {
-        Assert.assertNotNull(dependency);
-        Assert.assertNotNull(dependency.internal);
-    }
-    
     public static class Dependency {
         
         @Autowired
@@ -27,5 +21,11 @@ public class SimpleTest {
     
     public static class InternalDependency {
         
+    }
+    
+    @Test
+    public void test() {
+        Assert.assertNotNull(dependency);
+        Assert.assertNotNull(dependency.internal);
     }
 }

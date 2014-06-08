@@ -14,17 +14,6 @@ public class BlockedConstructorTest {
     @Autowired
     public Container container;
     
-    /**
-     * We place the bad dependency into a container so that the test object
-     * itself doesn't receive the exception when being constructed by JUnit.
-     */
-    @Test(expected = NoZeroArgumentConstructorException.class)
-    public void test() {
-        
-        @SuppressWarnings("unused")
-        Dependency dependency = container.dependency;
-    }
-    
     public static class Container {
         
         @Autowired
@@ -36,5 +25,16 @@ public class BlockedConstructorTest {
         public Dependency(String argument) {
             System.out.println("This obstructs the zero argument constructor.");
         }
+    }
+    
+    /**
+     * We place the bad dependency into a container so that the test object
+     * itself doesn't receive the exception when being constructed by JUnit.
+     */
+    @Test(expected = NoZeroArgumentConstructorException.class)
+    public void test() {
+        
+        @SuppressWarnings("unused")
+        Dependency dependency = container.dependency;
     }
 }

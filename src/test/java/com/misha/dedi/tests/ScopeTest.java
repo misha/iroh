@@ -23,7 +23,6 @@ public class ScopeTest {
     
     @Test
     public void testSingletonScope() {
-        System.out.println(s0 + ", " + s1);
         Assert.assertTrue(s0 == s1);
     }
     
@@ -40,7 +39,6 @@ public class ScopeTest {
     
     @Test
     public void testPrototypeScope() {
-        System.out.println(p0 + ", " + p1);
         Assert.assertTrue(p0 != p1);
     }
 }
