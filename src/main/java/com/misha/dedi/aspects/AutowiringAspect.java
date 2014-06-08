@@ -1,8 +1,10 @@
 package com.misha.dedi.aspects;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -20,6 +22,7 @@ import com.misha.dedi.annotations.Prototype;
 import com.misha.dedi.annotations.Qualifier;
 import com.misha.dedi.exceptions.NoSuchQualifierException;
 import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
+import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
 
 @Aspect
 public class AutowiringAspect {
@@ -29,6 +32,8 @@ public class AutowiringAspect {
     private final Map<Class<?>, Object> instances = new HashMap<>();
     
     private final Map<String, Class<?>> qualified = new HashMap<>();
+    
+    private final Map<Class<?>, Class<?>> implementations = new HashMap<>();
     
     private final Reflections reflections = new Reflections("");
     
@@ -47,7 +52,7 @@ public class AutowiringAspect {
             Qualifier annotation = type.getAnnotation(Qualifier.class);
             qualified.put(annotation.value(), type);
             log.info("Registered qualifier \"" + annotation.value() + "\" for " + type);
-        } 
+        }
     }
                 
     @Pointcut(
@@ -109,6 +114,67 @@ public class AutowiringAspect {
                     throw new NoSuchQualifierException(annotation.value());
                 }
             }
+            
+            /**
+             * However, even if the type is defined by the qualifier, it still
+             * might be abstract. In general, the type might be abstract anyway
+             * just to hide the implementation details. Resolve the abstract
+             * or interface type into an actual implementation.
+             */
+            if (Modifier.isInterface(type.getModifiers()) || 
+                Modifier.isAbstract(type.getModifiers())) {
+                
+                /**
+                 * Finding the implementing type is expensive, so let's check
+                 * our implementations cache first.
+                 */
+                if (implementations.containsKey(type)) {
+                    type = implementations.get(type);
+                    
+                } else {
+                    
+                    /**
+                     * Find all the subtypes of the given type. This might 
+                     * take a while...
+                     */
+                    @SuppressWarnings("unchecked")
+                    Set<Class<? extends Object>> subtypes = 
+                        reflections.getSubTypesOf((Class<Object>) type);
+                    
+                    /**
+                     * There must be exactly one concrete subtype at this point.
+                     */
+                    Iterator<Class<?>> subtypesIterator = subtypes.iterator();
+                    
+                    while (subtypesIterator.hasNext()) {
+                        int modifiers = subtypesIterator.next().getModifiers();
+                        
+                        /**
+                         * Not a concrete type, so throw it out.
+                         */
+                        if (Modifier.isAbstract(modifiers) ||
+                            Modifier.isInterface(modifiers)) {
+                            
+                            subtypesIterator.remove();
+                        }
+                    }
+
+                    /**
+                     * Now our set's size is actually valid - all concrete types.
+                     */
+                    if (subtypes.size() != 1) {
+                        throw new UnexpectedImplementationCountException(type, subtypes.size());
+                    }
+                    
+                    /**
+                     * Cache it for later.
+                     */
+                    Class<?> implementation = subtypes.iterator().next();
+                    log.info("Resolved abstract type " + type + " into implementing type " + implementation);
+                    implementations.put(type, implementation);
+                    type = implementation;
+                }
+            }
 
             /**
              * Inject a new instance for the field, checking for the prototype
@@ -129,7 +195,7 @@ public class AutowiringAspect {
                 }
 
             } catch (NoSuchMethodException e) {
-                throw new NoZeroArgumentConstructorException();
+                throw new NoZeroArgumentConstructorException(type);
             }
 
             /**

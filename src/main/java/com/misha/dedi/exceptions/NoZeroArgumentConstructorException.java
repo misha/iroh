@@ -8,4 +8,7 @@ package com.misha.dedi.exceptions;
 @SuppressWarnings("serial")
 public class NoZeroArgumentConstructorException extends Exception {
 
+    public NoZeroArgumentConstructorException(Class<?> type) {
+        super("No zero argument constructor was found for type " + type);
+    }
 }
