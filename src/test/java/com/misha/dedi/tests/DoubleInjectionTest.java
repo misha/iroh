@@ -23,8 +23,13 @@ public class DoubleInjectionTest {
     private Container second;
     
     @Test
-    public void test() {
+    public void testNoDoubleInjection() {
         Assert.assertTrue(first == first);
-        Assert.assertTrue(first != second);
+    }
+    
+    @Test
+    public void testNullRefresh() {
+        first = null;
+        Assert.assertTrue(first != null);
     }
 }

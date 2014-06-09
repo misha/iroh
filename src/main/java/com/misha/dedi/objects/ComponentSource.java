@@ -31,7 +31,6 @@ public class ComponentSource {
         this.clazz = clazz;
         this.cache = cache;
         this.annotation = clazz.getAnnotation(Component.class);
-        System.out.println("Source with type " + getType());
     }
     
     public ComponentSource(Object declarer, Method method, Map<Class<?>, Object> cache) {
@@ -39,7 +38,6 @@ public class ComponentSource {
         this.method = method;
         this.cache = cache;
         this.annotation = method.getAnnotation(Component.class);
-        System.out.println("Source with type " + getType());
     }
     
     public boolean isConcrete() {

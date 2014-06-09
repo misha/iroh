@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -38,51 +37,63 @@ public class AutowiringAspect {
     private final Map<Class<?>, Object> instances = new HashMap<>();
                 
     private final Reflections reflections = new Reflections("");
-    
-    private final Logger log = Logger.getLogger("dedi");
-        
+                
     private AutowiringAspect() throws DediException {
         for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
-            Component typeAnnotation = type.getAnnotation(Component.class);
-            ComponentSource source = new ComponentSource(type, instances);
-            components.put(source.getType(), source);
+            initializeType(type);
+        }
+    }
+    
+    private void initializeType(Class<?> type) throws DediException {
+        Component typeAnnotation = type.getAnnotation(Component.class);
+        ComponentSource source = new ComponentSource(type, instances);
+        components.put(source.getType(), source);
+    
+        if (!typeAnnotation.qualifier().equals("")) {
+            qualified.put(typeAnnotation.qualifier(), source);
+        }
         
-            if (!typeAnnotation.qualifier().equals("")) {
-                qualified.put(typeAnnotation.qualifier(), source);
-            }
+        if (source.isConcrete()) {
             
-            if (source.isConcrete()) {
-                for (Method method : type.getMethods()) {
-                    Component methodAnnotation = 
-                        method.getAnnotation(Component.class);
+            /**
+             * A source of component methods must be concrete because we'll 
+             * need to generate an instance of it in order to call the methods.
+             */
+            initializeMethods(source);
+        }
+    }
+    
+    private void initializeMethods(ComponentSource source) throws DediException {
+        Class<?> type = source.getType();
+        
+        for (Method method : type.getMethods()) {
+            Component methodAnnotation = method.getAnnotation(Component.class);
+            
+            if (methodAnnotation != null) {
+                if (!methodAnnotation.scope().equals("singleton")) {
+                    throw new ComponentMethodInPrototypeException(type);
+                }
+                
+                Object instance = null;
+                
+                if (instances.containsKey(type)) {
+                    instance = instances.get(type);
                     
-                    if (methodAnnotation != null) {
-                        if (!methodAnnotation.scope().equals("singleton")) {
-                            throw new ComponentMethodInPrototypeException(type);
-                        }
-                        
-                        Object instance = null;
-                        
-                        if (instances.containsKey(type)) {
-                            instance = instances.get(type);
-                            
-                        } else {
-                            instance = source.getInstance();
-                            instances.put(type, instance);
-                        }
-                        
-                        ComponentSource methodSource =
-                            new ComponentSource(
-                                instance, 
-                                method, 
-                                instances);
-                        
-                        components.put(methodSource.getType(), methodSource);
-                        
-                        if (!methodAnnotation.qualifier().equals("")) {
-                            qualified.put(methodAnnotation.qualifier(), methodSource);
-                        }
-                    }
+                } else {
+                    instance = source.getInstance();
+                    instances.put(type, instance);
+                }
+                
+                ComponentSource methodSource =
+                    new ComponentSource(
+                        instance, 
+                        method, 
+                        instances);
+                
+                components.put(methodSource.getType(), methodSource);
+                
+                if (!methodAnnotation.qualifier().equals("")) {
+                    qualified.put(methodAnnotation.qualifier(), methodSource);
                 }
             }
         }
@@ -109,13 +120,12 @@ public class AutowiringAspect {
     public void eagerlyInject(Object object) throws DediException {
         for (Field field : object.getClass().getFields()) {
             Autowired autowired = field.getAnnotation(Autowired.class);
-            
-            /**
-             * Only inject an autowired field if it's not marked 'lazy'.
-             */
-            if (autowired != null && autowired.lazy() == false) {           
-                inject(autowired, field, object);
-            }                  
+
+            if (autowired != null) {
+                if (autowired.lazy() == false) {           
+                    inject(autowired, field, object);                   
+                }
+            }
         }
     }
 
@@ -158,7 +168,7 @@ public class AutowiringAspect {
         field.setAccessible(true);
         
         /**
-         * Only inject if the current value is null.
+         * Only inject if the current pointer is to our local null location..
          */
         try {
             if (field.get(target) == null) {
