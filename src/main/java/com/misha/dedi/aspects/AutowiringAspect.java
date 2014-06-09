@@ -68,6 +68,7 @@ public class AutowiringAspect {
                             
                         } else {
                             instance = source.getInstance();
+                            instances.put(type, instance);
                         }
                         
                         ComponentSource methodSource =
@@ -87,7 +88,9 @@ public class AutowiringAspect {
         }
     }
     
-    @Pointcut("execution((! AutowiringAspect).new())")
+    @Pointcut(
+        "execution((! AutowiringAspect).new()) && " +
+        "!cflow(execution(AutowiringAspect * *(..)))")
     public void onConstruction() {
         
     }
