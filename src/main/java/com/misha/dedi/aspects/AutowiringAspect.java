@@ -90,7 +90,7 @@ public class AutowiringAspect {
     
     @Pointcut(
         "execution((! AutowiringAspect).new()) && " +
-        "!cflow(execution(AutowiringAspect * *(..)))")
+        "!cflow(within(AutowiringAspect))")
     public void onConstruction() {
         
     }
