@@ -14,6 +14,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.FieldSignature;
+import org.objenesis.Objenesis;
+import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import com.google.common.collect.HashMultimap;
@@ -35,9 +37,13 @@ public class AutowiringAspect {
     private final Map<String, ComponentSource> qualified = new HashMap<>();
     
     private final Map<Class<?>, Object> instances = new HashMap<>();
-                
+                    
+    private final Map<Class<?>, Object> nulls = new HashMap<>();
+    
     private final Reflections reflections = new Reflections("");
-                
+    
+    private final Objenesis objenesis = new ObjenesisStd(true);
+                        
     private AutowiringAspect() throws DediException {
         for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
             initializeType(type);
@@ -45,13 +51,9 @@ public class AutowiringAspect {
     }
     
     private void initializeType(Class<?> type) throws DediException {
-        Component typeAnnotation = type.getAnnotation(Component.class);
+        Component annotation = type.getAnnotation(Component.class);
         ComponentSource source = new ComponentSource(type, instances);
-        components.put(source.getType(), source);
-    
-        if (!typeAnnotation.qualifier().equals("")) {
-            qualified.put(typeAnnotation.qualifier(), source);
-        }
+        register(source, annotation.qualifier());
         
         if (source.isConcrete()) {
             
@@ -67,10 +69,10 @@ public class AutowiringAspect {
         Class<?> type = source.getType();
         
         for (Method method : type.getMethods()) {
-            Component methodAnnotation = method.getAnnotation(Component.class);
+            Component annotation = method.getAnnotation(Component.class);
             
-            if (methodAnnotation != null) {
-                if (!methodAnnotation.scope().equals("singleton")) {
+            if (annotation != null) {
+                if (!annotation.scope().equals("singleton")) {
                     throw new ComponentMethodInPrototypeException(type);
                 }
                 
@@ -84,18 +86,22 @@ public class AutowiringAspect {
                     instances.put(type, instance);
                 }
                 
-                ComponentSource methodSource =
+                register(
                     new ComponentSource(
                         instance, 
                         method, 
-                        instances);
-                
-                components.put(methodSource.getType(), methodSource);
-                
-                if (!methodAnnotation.qualifier().equals("")) {
-                    qualified.put(methodAnnotation.qualifier(), methodSource);
-                }
+                        instances),
+                    annotation.qualifier());
             }
+        }
+    }
+    
+    private void register(ComponentSource source, String qualifier) {
+        Class<?> type = source.getType();
+        components.put(type, source);
+        
+        if (!qualifier.equals("")) {
+            qualified.put(qualifier, source);
         }
     }
     
@@ -122,6 +128,8 @@ public class AutowiringAspect {
             Autowired autowired = field.getAnnotation(Autowired.class);
 
             if (autowired != null) {
+                nullify(field, object);
+                
                 if (autowired.lazy() == false) {           
                     inject(autowired, field, object);                   
                 }
@@ -171,7 +179,7 @@ public class AutowiringAspect {
          * Only inject if the current pointer is to our local null location..
          */
         try {
-            if (field.get(target) == null) {
+            if (field.get(target) == nulls.get(field.getType())) {
                 ComponentSource source = 
                     resolveFromQualifier(field, annotation.qualifier());
                 
@@ -182,24 +190,12 @@ public class AutowiringAspect {
                 if (source == null) {
                     source = resolveFromSubclasses(field);
                 }
-                
-                if (source == null) {
-                    throw new UnresolvableFieldException(field);
-                }
-   
-                /**
-                 * Inject a new instance for the field, checking for the prototype
-                 * annotation as necessary. The default scoping policy is singleton.
-                 */
+
                 Object instance = source.getInstance();
                 field.set(target, instance);
             }
             
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            
-            /**
-             * TODO: handle these exception elegantly.
-             */
             throw new RuntimeException(e);
         
         } finally {
@@ -274,6 +270,27 @@ public class AutowiringAspect {
         
         } else {
             return potential.iterator().next();
+        }
+    }
+    
+    private void nullify(Field field, Object target) {       
+        Class<?> type = field.getType();
+        
+        if (!nulls.containsKey(type)) {
+            nulls.put(type, objenesis.newInstance(type));
+        }
+        
+        boolean accessibility = field.isAccessible();
+        field.setAccessible(true);
+
+        try {
+            field.set(target, nulls.get(type));
+            
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        
+        } finally {
+            field.setAccessible(accessibility); 
         }
     }
 }

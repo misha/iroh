@@ -36,7 +36,7 @@ public class QualifierTest {
     @Autowired(qualifier = "B")
     public BaseClass b;
     
-    public abstract static class BaseClass {
+    public static class BaseClass {
         
     }
     
