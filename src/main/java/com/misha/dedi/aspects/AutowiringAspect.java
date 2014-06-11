@@ -25,8 +25,8 @@ import com.misha.dedi.annotations.Component;
 import com.misha.dedi.exceptions.ComponentMethodInPrototypeException;
 import com.misha.dedi.exceptions.DediException;
 import com.misha.dedi.exceptions.NoSuchQualifierException;
+import com.misha.dedi.exceptions.NonConcreteComponentClassException;
 import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
-import com.misha.dedi.exceptions.UnresolvableFieldException;
 import com.misha.dedi.objects.ComponentSource;
 
 @Aspect
@@ -54,15 +54,7 @@ public class AutowiringAspect {
         Component annotation = type.getAnnotation(Component.class);
         ComponentSource source = new ComponentSource(type, instances);
         register(source, annotation.qualifier());
-        
-        if (source.isConcrete()) {
-            
-            /**
-             * A source of component methods must be concrete because we'll 
-             * need to generate an instance of it in order to call the methods.
-             */
-            initializeMethods(source);
-        }
+        initializeMethods(source);
     }
     
     private void initializeMethods(ComponentSource source) throws DediException {
@@ -96,7 +88,13 @@ public class AutowiringAspect {
         }
     }
     
-    private void register(ComponentSource source, String qualifier) {
+    private void register(ComponentSource source, String qualifier) 
+        throws NonConcreteComponentClassException {
+         
+        if (!source.isConcrete()) {
+            throw new NonConcreteComponentClassException(source.getType());
+        }
+
         Class<?> type = source.getType();
         components.put(type, source);
         
@@ -128,7 +126,7 @@ public class AutowiringAspect {
             Autowired autowired = field.getAnnotation(Autowired.class);
 
             if (autowired != null) {
-                nullify(field, object);
+                nullify(field, autowired, object);
                 
                 if (autowired.lazy() == false) {           
                     inject(autowired, field, object);                   
@@ -180,18 +178,7 @@ public class AutowiringAspect {
          */
         try {
             if (field.get(target) == nulls.get(field.getType())) {
-                ComponentSource source = 
-                    resolveFromQualifier(field, annotation.qualifier());
-                
-                if (source == null) {
-                    source = resolveDirectly(field);
-                }
-                
-                if (source == null) {
-                    source = resolveFromSubclasses(field);
-                }
-
-                Object instance = source.getInstance();
+                Object instance = resolve(field, annotation).getInstance();
                 field.set(target, instance);
             }
             
@@ -205,6 +192,23 @@ public class AutowiringAspect {
              */
             field.setAccessible(accessibility); 
         }
+    }
+    
+    private ComponentSource resolve(Field field, Autowired annotation) 
+        throws DediException {
+        
+        ComponentSource source = 
+            resolveFromQualifier(field, annotation.qualifier());
+        
+        if (source == null) {
+            source = resolveDirectly(field);
+        }
+        
+        if (source == null) {
+            source = resolveFromSubclasses(field);
+        }
+        
+        return source;
     }
     
     private ComponentSource resolveDirectly(Field field) {
@@ -273,11 +277,13 @@ public class AutowiringAspect {
         }
     }
     
-    private void nullify(Field field, Object target) {       
+    private void nullify(Field field, Autowired annotation, Object target) 
+        throws DediException {       
+        
         Class<?> type = field.getType();
         
         if (!nulls.containsKey(type)) {
-            nulls.put(type, objenesis.newInstance(type));
+            nulls.put(type, objenesis.newInstance(resolve(field, annotation).getType()));
         }
         
         boolean accessibility = field.isAccessible();
