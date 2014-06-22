@@ -6,7 +6,6 @@ import com.misha.dedi.annotations.Autowired;
 import com.misha.dedi.annotations.Component;
 import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
 
-@Component
 public class TooFewSubclassesResolutionTest {
     
     public static abstract class Super {
@@ -16,17 +15,12 @@ public class TooFewSubclassesResolutionTest {
     @Component
     public static class Container {
         
-        @Autowired(lazy = true)
+        @Autowired
         public Super instance;
     }
     
-    @Autowired
-    private Container container;
-    
     @Test(expected = UnexpectedImplementationCountException.class)
     public void testNoImplementingClass() {
-        
-        @SuppressWarnings("unused")
-        Super instance = container.instance;
+        new Container();
     }
 }

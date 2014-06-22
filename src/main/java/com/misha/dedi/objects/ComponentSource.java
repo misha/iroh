@@ -152,6 +152,9 @@ public class ComponentSource {
             throw new RuntimeException(e);
             
         } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof DediException) {
+                throw (DediException) e.getCause();
+            }
             
             /**
              * Occurs when the constructor for the instance itself
