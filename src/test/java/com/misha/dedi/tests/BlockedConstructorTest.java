@@ -10,7 +10,6 @@ import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
  * Tests that the framework throws the correct exception when a default 
  * constructor is not available.
  */
-@Component
 public class BlockedConstructorTest {
     
     @Autowired(lazy = true)

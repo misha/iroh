@@ -6,7 +6,6 @@ import org.junit.Test;
 import com.misha.dedi.annotations.Autowired;
 import com.misha.dedi.annotations.Component;
 
-@Component
 public class NoNullInjectionTest {
     
     @Component(scope = "prototype")

@@ -24,7 +24,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.misha.dedi.annotations.Autowired;
 import com.misha.dedi.annotations.Component;
-import com.misha.dedi.exceptions.ComponentMethodInPrototypeException;
 import com.misha.dedi.exceptions.DediException;
 import com.misha.dedi.exceptions.NoSuchQualifierException;
 import com.misha.dedi.exceptions.NonConcreteComponentClassException;
@@ -48,7 +47,7 @@ public class AutowiringAspect {
     
     private final static Logger log = Logger.getLogger("dedi");
             
-    private final static Level level = Level.OFF;
+    private final static Level level = Level.ALL;
     
     static {
         log.setLevel(level);
@@ -74,10 +73,6 @@ public class AutowiringAspect {
             Component annotation = method.getAnnotation(Component.class);
             
             if (annotation != null) {
-                if (!annotation.scope().equals("singleton")) {
-                    throw new ComponentMethodInPrototypeException(type);
-                }
-
                 register(
                     new ComponentSource(
                         source, 
@@ -104,7 +99,11 @@ public class AutowiringAspect {
         }
     }
     
-    @Pointcut("execution((@com.misha.dedi.annotations.Component *).new(..))")
+    @Pointcut(
+        "execution((!AutowiringAspect).new(..)) && " +
+        "!cflow(execution(* AutowiringAspect.initializeMethods(..))) && " +
+        "!cflow(execution(* AutowiringAspect.initializeType(..))) && " +
+        "!cflow(execution(* AutowiringAspect.register(..)))")
     public void onConstruction() { }
                 
     @Pointcut("get(@com.misha.dedi.annotations.Autowired * *) && @annotation(annotation)")

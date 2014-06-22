@@ -3,7 +3,6 @@ package com.misha.dedi.tests;
 import org.junit.Test;
 
 import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Component;
 import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
 
 public class TooFewSubclassesResolutionTest {
@@ -12,7 +11,6 @@ public class TooFewSubclassesResolutionTest {
         
     }
 
-    @Component
     public static class Container {
         
         @Autowired

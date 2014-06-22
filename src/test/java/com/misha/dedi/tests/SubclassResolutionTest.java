@@ -9,30 +9,29 @@ import com.misha.dedi.annotations.Component;
 /**
  * Tests that subclasses are properly injected for their super classes.
  */
-@Component
 public class SubclassResolutionTest {
 
     public static abstract class Super {
-        
+
     }
     
     @Component
     public static class Sub extends Super {
-        
+
     }
 
     @Component
     public static class Container {
         
-        @Autowired(lazy = true)
+        @Autowired
         public Super instance;
     }
     
-    @Autowired
-    private Container container;
-    
     @Test
     public void testSubclassResolution() {
+        Container container = new Container();
+        Assert.assertNotNull(container);
+        Assert.assertNotNull(container.instance);
         Assert.assertTrue(container.instance instanceof Sub);
     }
 }

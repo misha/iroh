@@ -23,7 +23,6 @@ public class MethodComponentTest {
         }
     }
     
-    @Component
     public static class Container {
         
         @Autowired
