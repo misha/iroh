@@ -1,4 +1,4 @@
-package com.misha.dedi.examples.prime;
+package com.misha.dedi.tests.examples.prime;
 
 public interface LowerBoundCalculator {
 

@@ -1,4 +1,4 @@
-package com.misha.dedi.examples.prime;
+package com.misha.dedi.tests.examples.prime;
 
 import com.misha.dedi.annotations.Component;
 

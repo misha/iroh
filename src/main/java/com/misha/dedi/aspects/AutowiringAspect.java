@@ -1,11 +1,8 @@
 package com.misha.dedi.aspects;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -18,33 +15,20 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.FieldSignature;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
-import org.reflections.Reflections;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Component;
 import com.misha.dedi.exceptions.DediException;
-import com.misha.dedi.exceptions.NoSuchQualifierException;
-import com.misha.dedi.exceptions.NonConcreteComponentClassException;
-import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
-import com.misha.dedi.objects.ComponentSource;
+import com.misha.dedi.managers.SourceManager;
 
 @Aspect
 public class AutowiringAspect {
-        
-    private final Multimap<Class<?>, ComponentSource> components = HashMultimap.create();
-    
-    private final Map<String, ComponentSource> qualified = new HashMap<>();
-    
-    private final Map<Class<?>, Object> instances = new HashMap<>();
-                    
+                                    
     private final Map<Class<?>, Object> nulls = new HashMap<>();
     
-    private final Reflections reflections = new Reflections("");
+    private final SourceManager manager = new SourceManager();
     
     private final Objenesis objenesis = new ObjenesisStd(true);
-    
+        
     private final static Logger log = Logger.getLogger("dedi");
             
     private final static Level level = Level.ALL;
@@ -54,107 +38,63 @@ public class AutowiringAspect {
     }
     
     private AutowiringAspect() throws DediException {     
-        for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
-            initializeType(type);
-        }
+        // checkForCycles();
     }
     
-    private void initializeType(Class<?> type) throws DediException {
-        Component annotation = type.getAnnotation(Component.class);
-        ComponentSource source = new ComponentSource(type, instances);
-        register(source, annotation.qualifier());
-        initializeMethods(source);
-    }
-    
-    private void initializeMethods(ComponentSource source) throws DediException {
-        Class<?> type = source.getType();
-        
-        for (Method method : type.getMethods()) {
-            Component annotation = method.getAnnotation(Component.class);
-            
-            if (annotation != null) {
-                register(
-                    new ComponentSource(
-                        source, 
-                        method, 
-                        instances),
-                    annotation.qualifier());
-            }
-        }
-    }
-    
-    private void register(ComponentSource source, String qualifier) 
-        throws NonConcreteComponentClassException {
+//    @SuppressWarnings("serial")
+//    private void checkForCycles() throws DediException {
+//        for (ComponentSourceImpl source : components.values()) {
+//            final Class<?> clazz = source.getType();           
+//            checkForCycles(new HashSet<Class<?>>() {{ add(clazz); }}, clazz);
+//        }
+//    }
+//    
+//    private void checkForCycles(Set<Class<?>> existing, Class<?> target) 
+//        throws DependencyCycleException {
+//        
+//        for (Field field : getAutowirableFields(target)) {
+//            if (existing.contains(field.getClass())) {
+//                throw new DependencyCycleException(field, target);
+//                
+//            } else {
+//                existing.add(field.getClass());
+//                checkForCycles(existing, field.getClass());
+//            }
+//        }
+//    }
 
-        if (!source.isConcrete()) {
-            throw new NonConcreteComponentClassException(source.getType());
-        }
-
-        Class<?> type = source.getType();
-        log.info("registering " + type);
-        components.put(type, source);
-        
-        if (!qualifier.equals("")) {
-            qualified.put(qualifier, source);
-        }
-    }
-    
-    @Pointcut(
-        "execution((!AutowiringAspect).new(..)) && " +
-        "!cflow(execution(* AutowiringAspect.initializeMethods(..))) && " +
-        "!cflow(execution(* AutowiringAspect.initializeType(..))) && " +
-        "!cflow(execution(* AutowiringAspect.register(..)))")
+    @Pointcut("execution((!com.misha.dedi..* || com.misha.dedi.tests..*).new(..))")
     public void onConstruction() { }
                 
     @Pointcut("get(@com.misha.dedi.annotations.Autowired * *) && @annotation(annotation)")
-    public void onFieldAccess(Autowired annotation) { }
-     
-    /**
-     * Injects dependencies into an object prior to the constructor.
-     */
+    public void onAutowiredFieldAccess(Autowired annotation) { }
+
     @Before("onConstruction() && this(target)")
     public void eagerlyInject(Object target) throws DediException {
-        for (Field field : target.getClass().getDeclaredFields()) {
+        for (Field field : getAutowirableFields(target.getClass())) {
             Autowired autowired = field.getAnnotation(Autowired.class);
-
-            if (autowired != null) { 
-                field.setAccessible(true);
+            
+            if (autowired.lazy() == false) {           
+                log.info(String.format(
+                    "eagerly injecting field '%s' in '%s'",
+                    field.getName(),
+                    target.toString()));
                 
-                if (autowired.lazy() == false) {           
-                    log.info(String.format(
-                        "eagerly injecting field '%s' in '%s'",
-                        field.getName(),
-                        target.toString()));
-                    
-                    inject(autowired, field, target);   
-                    
-                } else {
-                    nullify(field, autowired, target);
-                }
-            }
+                inject(autowired, field, target);   
+                
+            } else {
+                nullify(field, autowired, target);
+            }    
         }
     }
 
-    /**
-     * Injects dependencies into a field prior to accessing the field.
-     */
-    @Before("onFieldAccess(annotation) && !onConstruction()")
+    @Before("onAutowiredFieldAccess(annotation)")
     public void lazilyInject(Autowired annotation, JoinPoint thisJoinPoint) 
         throws DediException {
 
-        /**
-         * Figure out which field needs to get injected. If we allow the
-         * autowired annotation on things other than fields, then this
-         * cast will have to be refactored into a lookup.
-         */
         FieldSignature fs = (FieldSignature) thisJoinPoint.getSignature();
         Field field = fs.getField();
         field.setAccessible(true);
-
-        /**
-         * Get the target field instance, and the type of object that needs
-         * to be injected into the field instance.
-         */
         Object target = thisJoinPoint.getTarget();
         
         if (isNullified(field, target)) {
@@ -171,94 +111,26 @@ public class AutowiringAspect {
         throws DediException {
 
         try {
-            field.set(target, resolve(field, annotation).getInstance());
+            field.set(target, manager.getInstance(field));
         
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);        
         }
     }
     
-    private ComponentSource resolve(Field field, Autowired annotation) 
-        throws DediException {
+    private Set<Field> getAutowirableFields(Class<?> clazz) {
+        Set<Field> fields = new HashSet<>();
         
-        ComponentSource source = 
-            resolveFromQualifier(field, annotation.qualifier());
-        
-        if (source == null) {
-            source = resolveDirectly(field);
-        }
-        
-        if (source == null) {
-            source = resolveFromSubclasses(field);
-        }
-        
-        return source;
-    }
-    
-    private ComponentSource resolveDirectly(Field field) {
-        Collection<ComponentSource> potential = components.get(field.getType());
-        Iterator<ComponentSource> iterator = potential.iterator();
-        
-        while (iterator.hasNext()) {
-            ComponentSource candidate = iterator.next();
-            
-            if (!candidate.isConcrete()) {
-                iterator.remove();
-            }
-        }
-        
-        if (potential.size() == 1) {
-            ComponentSource source = potential.iterator().next();
-            
-            if (source.isConcrete()) {
-                return source;
-            }
-        }
-        
-        return null;
-    }
-    
-    private ComponentSource resolveFromQualifier(Field field, String qualifier) 
-        throws NoSuchQualifierException {
-        
-        if (!qualifier.equals("")) {
-            ComponentSource source = qualified.get(qualifier);
-            
-            /**
-             * Validate that we got an actual type from the qualified list.
-             */
-            if (source == null) {
-                throw new NoSuchQualifierException(qualifier);
-            }
-            
-            return source;
-        }
-        
-        return null;
-    }
-    
-    private ComponentSource resolveFromSubclasses(Field field) 
-        throws UnexpectedImplementationCountException {
-        
-        Set<ComponentSource> potential = new HashSet<>();
-        Class<?> target = field.getType();
-        
-        for (Class<?> type : components.keySet()) {
-            if (target.isAssignableFrom(type)) {
-                for (ComponentSource source : components.get(type)) {
-                    if (source.isConcrete()) {
-                        potential.add(source);
-                    }
-                }
-            }
-        }
+        for (Field field : clazz.getDeclaredFields()) {
+            Autowired autowired = field.getAnnotation(Autowired.class);
 
-        if (potential.size() != 1) {
-            throw new UnexpectedImplementationCountException(target, potential.size());
-        
-        } else {
-            return potential.iterator().next();
+            if (autowired != null) { 
+                field.setAccessible(true);
+                fields.add(field);
+            }
         }
+        
+        return fields;
     }
     
     private boolean isNullified(Field field, Object target) {
@@ -287,7 +159,7 @@ public class AutowiringAspect {
         Class<?> type = field.getType();
         
         if (!nulls.containsKey(type)) {
-            nulls.put(type, objenesis.newInstance(resolve(field, annotation).getType()));
+            nulls.put(type, objenesis.newInstance(manager.getImplementingType(field)));
         }
         
         try {
