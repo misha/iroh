@@ -2,9 +2,9 @@ package com.misha.dedi.tests;
 
 import org.junit.Test;
 
-import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Component;
-import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
+import com.misha.dedi.container.annotations.Autowired;
+import com.misha.dedi.container.annotations.Component;
+import com.misha.dedi.container.exceptions.NoZeroArgumentConstructorException;
 
 /**
  * Tests that the framework throws the correct exception when a default 

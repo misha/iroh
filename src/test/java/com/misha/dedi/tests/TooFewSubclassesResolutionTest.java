@@ -2,8 +2,8 @@ package com.misha.dedi.tests;
 
 import org.junit.Test;
 
-import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
+import com.misha.dedi.container.annotations.Autowired;
+import com.misha.dedi.container.exceptions.UnexpectedImplementationCountException;
 
 public class TooFewSubclassesResolutionTest {
     

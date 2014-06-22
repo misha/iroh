@@ -1,10 +1,10 @@
-package com.misha.dedi.sources;
+package com.misha.dedi.container.sources;
 
 import java.lang.reflect.Constructor;
 
-import com.misha.dedi.annotations.Component;
-import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
-import com.misha.dedi.exceptions.NonConcreteComponentClassException;
+import com.misha.dedi.container.annotations.Component;
+import com.misha.dedi.container.exceptions.NoZeroArgumentConstructorException;
+import com.misha.dedi.container.exceptions.NonConcreteComponentClassException;
 
 public class TypeSource extends Source {
     

@@ -1,4 +1,4 @@
-package com.misha.dedi.exceptions;
+package com.misha.dedi.container.exceptions;
 
 @SuppressWarnings("serial")
 public class FailedConstructionException extends DediException {

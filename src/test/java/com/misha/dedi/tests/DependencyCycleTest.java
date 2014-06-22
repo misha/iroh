@@ -1,10 +1,9 @@
 package com.misha.dedi.tests;
 
-import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Component;
-
 public class DependencyCycleTest {
 
+    /**
+     * 
     @Component
     public static class A {
      
@@ -19,8 +18,9 @@ public class DependencyCycleTest {
         private A a;
     }
     
-    // @Test(expected = DependencyCycleException.class)
+    @Test(expected = DependencyCycleException.class)
     public void test() {
         new A();
     }
+    */
 }

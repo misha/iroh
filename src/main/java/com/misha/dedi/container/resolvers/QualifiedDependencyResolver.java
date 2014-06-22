@@ -1,13 +1,13 @@
-package com.misha.dedi.resolvers;
+package com.misha.dedi.container.resolvers;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Multimap;
-import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.exceptions.NoSuchQualifierException;
-import com.misha.dedi.sources.Source;
+import com.misha.dedi.container.annotations.Autowired;
+import com.misha.dedi.container.exceptions.NoSuchQualifierException;
+import com.misha.dedi.container.sources.Source;
 
 public class QualifiedDependencyResolver implements DependencyResolver {
 

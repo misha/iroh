@@ -1,4 +1,4 @@
-package com.misha.dedi.exceptions;
+package com.misha.dedi.container.exceptions;
 
 /**
  * Represents an exception thrown when a base type is autowired, but there

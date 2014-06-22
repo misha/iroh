@@ -2,7 +2,7 @@ package com.misha.dedi.tests.examples.prime;
 
 import java.util.HashMap;
 
-import com.misha.dedi.annotations.Component;
+import com.misha.dedi.container.annotations.Component;
 
 @Component
 public class CachingLowerBoundCalculator implements LowerBoundCalculator {

@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.misha.dedi.annotations.Autowired;
+import com.misha.dedi.container.annotations.Autowired;
 
 public class Main {    
     

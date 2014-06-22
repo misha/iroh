@@ -1,4 +1,4 @@
-package com.misha.dedi.annotations;
+package com.misha.dedi.container.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

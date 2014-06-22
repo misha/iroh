@@ -2,8 +2,8 @@ package com.misha.dedi.tests.examples.prime;
 
 import java.util.Iterator;
 
-import com.misha.dedi.annotations.Autowired;
-import com.misha.dedi.annotations.Component;
+import com.misha.dedi.container.annotations.Autowired;
+import com.misha.dedi.container.annotations.Component;
 
 @Component
 public class PrimalityCalculator {

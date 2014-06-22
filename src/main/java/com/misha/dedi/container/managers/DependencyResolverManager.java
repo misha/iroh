@@ -1,17 +1,17 @@
-package com.misha.dedi.managers;
+package com.misha.dedi.container.managers;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Multimap;
-import com.misha.dedi.exceptions.DediException;
-import com.misha.dedi.exceptions.UnresolvableFieldException;
-import com.misha.dedi.resolvers.DependencyResolver;
-import com.misha.dedi.resolvers.DirectDependencyResolver;
-import com.misha.dedi.resolvers.QualifiedDependencyResolver;
-import com.misha.dedi.resolvers.SubclassDependencyResolver;
-import com.misha.dedi.sources.Source;
+import com.misha.dedi.container.exceptions.DediException;
+import com.misha.dedi.container.exceptions.UnresolvableFieldException;
+import com.misha.dedi.container.resolvers.DependencyResolver;
+import com.misha.dedi.container.resolvers.DirectDependencyResolver;
+import com.misha.dedi.container.resolvers.QualifiedDependencyResolver;
+import com.misha.dedi.container.resolvers.SubclassDependencyResolver;
+import com.misha.dedi.container.sources.Source;
 
 public class DependencyResolverManager {
 

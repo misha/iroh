@@ -1,13 +1,13 @@
-package com.misha.dedi.sources;
+package com.misha.dedi.container.sources;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.misha.dedi.annotations.Component;
-import com.misha.dedi.exceptions.DediException;
-import com.misha.dedi.exceptions.FailedConstructionException;
-import com.misha.dedi.exceptions.NonConcreteComponentClassException;
+import com.misha.dedi.container.annotations.Component;
+import com.misha.dedi.container.exceptions.DediException;
+import com.misha.dedi.container.exceptions.FailedConstructionException;
+import com.misha.dedi.container.exceptions.NonConcreteComponentClassException;
 
 public abstract class Source {
         

@@ -1,6 +1,6 @@
 package com.misha.dedi.tests.examples.prime;
 
-import com.misha.dedi.annotations.Component;
+import com.misha.dedi.container.annotations.Component;
 
 @Component
 public class RemainderCalculator {

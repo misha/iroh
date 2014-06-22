@@ -1,4 +1,4 @@
-package com.misha.dedi.exceptions;
+package com.misha.dedi.container.exceptions;
 
 /**
  * Thrown when an unprocessed qualifier is used in an autowired annotation.
