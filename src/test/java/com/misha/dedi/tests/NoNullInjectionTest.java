@@ -6,12 +6,9 @@ import org.junit.Test;
 import com.misha.dedi.annotations.Autowired;
 import com.misha.dedi.annotations.Component;
 
-/**
- * Tests that objects are never autowired twice.
- */
 @Component
-public class DoubleInjectionTest {
-
+public class NoNullInjectionTest {
+    
     @Component(scope = "prototype")
     public static class Dependency {
         
@@ -21,8 +18,8 @@ public class DoubleInjectionTest {
     private Dependency dependency;
     
     @Test
-    public void testNoDoubleInjection() {
-        Assert.assertTrue(dependency == dependency);
-        Assert.assertNotNull(dependency);
+    public void testNullRefresh() {
+        dependency = null;
+        Assert.assertNull(dependency);
     }
 }
