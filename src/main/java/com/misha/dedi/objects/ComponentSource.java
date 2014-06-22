@@ -19,7 +19,7 @@ public class ComponentSource {
     
     private Class<?> clazz;
     
-    private Object declarer;
+    private ComponentSource declarer;
     
     private Method method;
     
@@ -33,7 +33,7 @@ public class ComponentSource {
         this.annotation = clazz.getAnnotation(Component.class);
     }
     
-    public ComponentSource(Object declarer, Method method, Map<Class<?>, Object> cache) {
+    public ComponentSource(ComponentSource declarer, Method method, Map<Class<?>, Object> cache) {
         this.declarer = declarer;
         this.method = method;
         this.cache = cache;
@@ -112,17 +112,18 @@ public class ComponentSource {
                  * Get an instance from the stored method.
                  */
                 Class<?> type = method.getReturnType();
-    
+                Object declarerInstance = declarer.getInstance();
+
                 if (annotation.scope().equals("prototype")) {
-                    return method.invoke(declarer);
+                    return method.invoke(declarerInstance);
                     
                 } else {
                     if (cache.containsKey(type)) {
                         return cache.get(type);
                         
                     } else {
-                        Object instance = method.invoke(declarer);
-                        cache.put(clazz, instance);
+                        Object instance = method.invoke(declarerInstance);
+                        cache.put(type, instance);
                         return instance;
                     }
                 }

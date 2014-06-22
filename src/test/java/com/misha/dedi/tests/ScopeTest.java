@@ -9,6 +9,7 @@ import com.misha.dedi.annotations.Component;
 /**
  * Tests autowiring scoping rules.
  */
+@Component
 public class ScopeTest {
 
     @Autowired

@@ -9,6 +9,7 @@ import com.misha.dedi.annotations.Component;
 /**
  * Tests that a simple two-level autowiring works.
  */
+@Component
 public class SimpleTest {
     
     @Autowired

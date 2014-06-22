@@ -9,8 +9,13 @@ import com.misha.dedi.annotations.Component;
 /**
  * Tests that objects are never autowired twice.
  */
+@Component
 public class DoubleInjectionTest {
 
+    public DoubleInjectionTest() {
+        
+    }
+    
     @Component(scope = "prototype")
     public static class Container {
         
@@ -19,17 +24,15 @@ public class DoubleInjectionTest {
     @Autowired
     private Container first;
     
-    @Autowired
-    private Container second;
-    
     @Test
     public void testNoDoubleInjection() {
         Assert.assertTrue(first == first);
+        Assert.assertNotNull(first);
     }
     
     @Test
     public void testNullRefresh() {
         first = null;
-        Assert.assertTrue(first != null);
+        Assert.assertNull(first);
     }
 }

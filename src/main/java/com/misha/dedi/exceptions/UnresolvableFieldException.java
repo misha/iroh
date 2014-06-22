@@ -2,7 +2,6 @@ package com.misha.dedi.exceptions;
 
 import java.lang.reflect.Field;
 
-
 @SuppressWarnings("serial")
 public class UnresolvableFieldException extends DediException {
 

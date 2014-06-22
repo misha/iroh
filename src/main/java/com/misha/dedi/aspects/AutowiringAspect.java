@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -43,8 +45,16 @@ public class AutowiringAspect {
     private final Reflections reflections = new Reflections("");
     
     private final Objenesis objenesis = new ObjenesisStd(true);
-                        
-    private AutowiringAspect() throws DediException {
+    
+    private final static Logger log = Logger.getLogger("dedi");
+            
+    private final static Level level = Level.ALL;
+    
+    static {
+        log.setLevel(level);
+    }
+    
+    private AutowiringAspect() throws DediException {     
         for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
             initializeType(type);
         }
@@ -67,20 +77,10 @@ public class AutowiringAspect {
                 if (!annotation.scope().equals("singleton")) {
                     throw new ComponentMethodInPrototypeException(type);
                 }
-                
-                Object instance = null;
-                
-                if (instances.containsKey(type)) {
-                    instance = instances.get(type);
-                    
-                } else {
-                    instance = source.getInstance();
-                    instances.put(type, instance);
-                }
-                
+
                 register(
                     new ComponentSource(
-                        instance, 
+                        source, 
                         method, 
                         instances),
                     annotation.qualifier());
@@ -90,12 +90,13 @@ public class AutowiringAspect {
     
     private void register(ComponentSource source, String qualifier) 
         throws NonConcreteComponentClassException {
-         
+
         if (!source.isConcrete()) {
             throw new NonConcreteComponentClassException(source.getType());
         }
 
         Class<?> type = source.getType();
+        log.info("registering " + type);
         components.put(type, source);
         
         if (!qualifier.equals("")) {
@@ -103,33 +104,33 @@ public class AutowiringAspect {
         }
     }
     
-    @Pointcut(
-        "execution((! AutowiringAspect).new()) && " +
-        "!cflow(within(AutowiringAspect))")
-    public void onConstruction() {
-        
-    }
+    @Pointcut("execution((@com.misha.dedi.annotations.Component *).new(..))")
+    public void onConstruction() { }
                 
-    @Pointcut(
-        "get(@com.misha.dedi.annotations.Autowired * *) && " +
-        "@annotation(annotation)")
-    public void onFieldAccess(Autowired annotation) { 
-        
-    }
-    
+    @Pointcut("get(@com.misha.dedi.annotations.Autowired * *) && @annotation(annotation)")
+    public void onFieldAccess(Autowired annotation) { }
+     
     /**
      * Injects dependencies into an object prior to the constructor.
      */
-    @Before("onConstruction() && this(object)")
-    public void eagerlyInject(Object object) throws DediException {
-        for (Field field : object.getClass().getFields()) {
+    @Before("onConstruction() && this(target)")
+    public void eagerlyInject(Object target) throws DediException {
+        for (Field field : target.getClass().getDeclaredFields()) {
             Autowired autowired = field.getAnnotation(Autowired.class);
 
-            if (autowired != null) {
-                nullify(field, autowired, object);
+            if (autowired != null) { 
+                field.setAccessible(true);
                 
                 if (autowired.lazy() == false) {           
-                    inject(autowired, field, object);                   
+                    log.info(String.format(
+                        "eagerly injecting field '%s' in '%s'",
+                        field.getName(),
+                        target.toString()));
+                    
+                    inject(autowired, field, target);   
+                    
+                } else {
+                    nullify(field, autowired, target);
                 }
             }
         }
@@ -139,9 +140,7 @@ public class AutowiringAspect {
      * Injects dependencies into a field prior to accessing the field.
      */
     @Before("onFieldAccess(annotation) && !onConstruction()")
-    public void lazilyInject(
-        Autowired annotation, 
-        JoinPoint thisJoinPoint) 
+    public void lazilyInject(Autowired annotation, JoinPoint thisJoinPoint) 
         throws DediException {
 
         /**
@@ -151,46 +150,32 @@ public class AutowiringAspect {
          */
         FieldSignature fs = (FieldSignature) thisJoinPoint.getSignature();
         Field field = fs.getField();
+        field.setAccessible(true);
 
         /**
          * Get the target field instance, and the type of object that needs
          * to be injected into the field instance.
          */
         Object target = thisJoinPoint.getTarget();
-        inject(annotation, field, target);
+        
+        if (isNullified(field, target)) {
+            log.info(String.format(
+                "lazily injecting field '%s' in '%s'",
+                field.getName(),
+                target.toString()));
+
+            inject(annotation, field, target);            
+        }
     }   
     
-    private void inject(
-        Autowired annotation, 
-        Field field, 
-        Object target) 
+    private void inject(Autowired annotation, Field field, Object target) 
         throws DediException {
-        
-        /**
-         * Change the field's accessibility so that no access exceptions
-         * are thrown when we inject the actual value.
-         */
-        boolean accessibility = field.isAccessible();
-        field.setAccessible(true);
-        
-        /**
-         * Only inject if the current pointer is to our local null location..
-         */
+
         try {
-            if (field.get(target) == nulls.get(field.getType())) {
-                Object instance = resolve(field, annotation).getInstance();
-                field.set(target, instance);
-            }
-            
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            field.set(target, resolve(field, annotation).getInstance());
         
-        } finally {
-    
-            /**
-             * Reset accessibility to avoid missing future access exceptions.
-             */
-            field.setAccessible(accessibility); 
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);        
         }
     }
     
@@ -277,6 +262,26 @@ public class AutowiringAspect {
         }
     }
     
+    private boolean isNullified(Field field, Object target) {
+        Class<?> type = field.getType();
+        Object value = null;
+        
+        try {
+            value = field.get(target);
+            
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        
+        if (nulls.containsKey(type)) {
+            if (nulls.get(type) == value) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     private void nullify(Field field, Autowired annotation, Object target) 
         throws DediException {       
         
@@ -286,17 +291,18 @@ public class AutowiringAspect {
             nulls.put(type, objenesis.newInstance(resolve(field, annotation).getType()));
         }
         
-        boolean accessibility = field.isAccessible();
-        field.setAccessible(true);
-
         try {
-            field.set(target, nulls.get(type));
+            Object local = nulls.get(type);
+            log.info(String.format(
+                "nullifying field '%s' with '%s' in '%s'", 
+                field.getName(), 
+                local.toString(),
+                target.toString()));
+            
+            field.set(target, local);
             
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        
-        } finally {
-            field.setAccessible(accessibility); 
+            throw new RuntimeException(e);        
         }
     }
 }

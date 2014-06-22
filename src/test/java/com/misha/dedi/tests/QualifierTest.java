@@ -11,6 +11,7 @@ import com.misha.dedi.annotations.Component;
  * on types allows autowired annotations to specify which implementation should
  * be injected.
  */
+@Component
 public class QualifierTest {
 
     @Autowired(qualifier = "test")

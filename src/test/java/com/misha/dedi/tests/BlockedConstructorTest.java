@@ -10,18 +10,12 @@ import com.misha.dedi.exceptions.NoZeroArgumentConstructorException;
  * Tests that the framework throws the correct exception when a default 
  * constructor is not available.
  */
+@Component
 public class BlockedConstructorTest {
+    
+    @Autowired(lazy = true)
+    public Dependency dependency;
 
-    @Autowired
-    public Container container;
-    
-    @Component
-    public static class Container {
-        
-        @Autowired(lazy = true)
-        public Dependency dependency;
-    }
-    
     @Component
     public static class Dependency {
         
@@ -30,14 +24,10 @@ public class BlockedConstructorTest {
         }
     }
     
-    /**
-     * We place the bad dependency into a container so that the test object
-     * itself doesn't receive the exception when being constructed by JUnit.
-     */
     @Test(expected = NoZeroArgumentConstructorException.class)
     public void test() {
         
         @SuppressWarnings("unused")
-        Dependency dependency = container.dependency;
+        Dependency dependency = this.dependency;
     }
 }

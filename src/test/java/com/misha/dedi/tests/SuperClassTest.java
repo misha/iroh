@@ -10,6 +10,7 @@ import com.misha.dedi.exceptions.UnexpectedImplementationCountException;
 /**
  * Tests that subclasses are properly injected for their super classes.
  */
+@Component
 public class SuperClassTest {
 
     public static abstract class Super {
@@ -33,7 +34,7 @@ public class SuperClassTest {
     
     @Test
     public void testSuperClassResolution() {
-        Assert.assertTrue(container.instance instanceof Super);
+        Assert.assertTrue(container.instance instanceof Sub);
     }
     
     public static abstract class Super2 {

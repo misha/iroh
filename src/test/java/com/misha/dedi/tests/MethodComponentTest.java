@@ -9,6 +9,7 @@ import com.misha.dedi.annotations.Component;
 /**
  * Tests that methods annotated with @Component correctly get called.
  */
+@Component
 public class MethodComponentTest {
 
     static int count = 0;
