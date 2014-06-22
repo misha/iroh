@@ -48,7 +48,7 @@ public class AutowiringAspect {
     
     private final static Logger log = Logger.getLogger("dedi");
             
-    private final static Level level = Level.ALL;
+    private final static Level level = Level.OFF;
     
     static {
         log.setLevel(level);

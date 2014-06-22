@@ -9,16 +9,15 @@ import com.misha.dedi.annotations.Component;
 /**
  * Tests that methods annotated with @Component correctly get called.
  */
-@Component
 public class MethodComponentTest {
 
     static int count = 0;
     
     @Component
-    public static class Dependency {
+    public static class DependencyFactory {
      
         @Component
-        public Object buildObjectDependency() {
+        public Object object() {
             count += 1;
             return new Object();
         }
@@ -27,18 +26,14 @@ public class MethodComponentTest {
     @Component
     public static class Container {
         
-        @Autowired(lazy = true)
+        @Autowired
         public Object dependency;
     }
     
-    @Autowired
-    public Container container;
-    
     @Test
     public void testLazyMethodInjection() {
-        Assert.assertNotNull(container);
         Assert.assertTrue(count == 0);
-        Assert.assertNotNull(container.dependency);
+        new Container();
         Assert.assertTrue(count == 1);
     }
 }

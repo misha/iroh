@@ -10,7 +10,7 @@ import com.misha.dedi.annotations.Component;
  * Tests that objects are never autowired twice.
  */
 @Component
-public class DoubleInjectionTest {
+public class NoDoubleInjectionTest {
 
     @Component(scope = "prototype")
     public static class Dependency {
