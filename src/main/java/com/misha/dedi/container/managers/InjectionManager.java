@@ -18,9 +18,7 @@ public class InjectionManager {
 
     private final Objenesis objenesis = new ObjenesisStd(true);
 
-    public InjectionManager(ResolutionManager resolver) 
-        throws DediException { 
-        
+    public InjectionManager(ResolutionManager resolver) throws DediException {         
         this.resolver = resolver;
     }
 
