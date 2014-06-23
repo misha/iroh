@@ -7,7 +7,7 @@ import com.misha.dedi.container.sources.Source;
 
 public interface DependencyResolver {
     
-    public void register(Source source);
+    public void register(Source source) throws DediException;
 
     public Source resolve(Field field) throws DediException;
 }

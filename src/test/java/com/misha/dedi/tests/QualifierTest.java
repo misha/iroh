@@ -13,22 +13,22 @@ import com.misha.dedi.container.annotations.Component;
  */
 public class QualifierTest {
     
-    @Autowired(qualifier = "A")
+    @Autowired(qualifier = "QualifierTest.A")
     public BaseClass a;
     
-    @Autowired(qualifier = "B")
+    @Autowired(qualifier = "QualifierTest.B")
     public BaseClass b;
     
     public static class BaseClass {
         
     }
     
-    @Component(qualifier = "A")
+    @Component(qualifier = "QualifierTest.A")
     public static class AClass extends BaseClass {
         
     }
     
-    @Component(qualifier = "B")
+    @Component(qualifier = "QualifierTest.B")
     public static class BClass extends BaseClass {
         
     }

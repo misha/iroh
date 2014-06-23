@@ -8,10 +8,10 @@ import com.misha.dedi.container.annotations.Component;
 
 public class DegenerateQualifierTest {
 
-    @Autowired(qualifier = "test")
+    @Autowired(qualifier = "DegenerateQualifierTest.test")
     public Qualified qualified;
     
-    @Component(qualifier = "test")
+    @Component(qualifier = "DegenerateQualifierTest.test")
     public static class Qualified {
         
     }

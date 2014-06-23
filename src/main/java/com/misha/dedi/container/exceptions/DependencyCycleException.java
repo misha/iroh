@@ -1,18 +1,18 @@
 package com.misha.dedi.container.exceptions;
 
-import java.lang.reflect.Field;
+import java.util.List;
 
+import com.google.common.base.Joiner;
 
 @SuppressWarnings("serial")
 public class DependencyCycleException extends DediException {
 
-    public DependencyCycleException(Field field, Class<?> objectType) {
+    public DependencyCycleException(final List<Class<?>> trace) {
         super(
             String.format(
-                "A dependency cycle was detected when checking the field " +
-                "'%s' of type '%s' in the class '%s'.",
-                field.getName(),
-                field.getType().toString(),
-                objectType.toString()));
+                "A dependency cycle was detected: %s.",
+                Joiner
+                    .on(" => ")
+                    .join(trace)));
     }
 }
