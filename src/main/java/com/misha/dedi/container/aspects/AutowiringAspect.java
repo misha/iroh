@@ -7,41 +7,59 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.FieldSignature;
+import org.reflections.Reflections;
 
-import com.misha.dedi.container.annotations.Autowired;
+import com.misha.dedi.container.annotations.Component;
 import com.misha.dedi.container.exceptions.DediException;
 import com.misha.dedi.container.managers.InjectionManager;
+import com.misha.dedi.container.managers.ResolutionManager;
+import com.misha.dedi.container.resolvers.DirectDependencyResolver;
+import com.misha.dedi.container.resolvers.QualifiedDependencyResolver;
+import com.misha.dedi.container.resolvers.SubclassDependencyResolver;
 
 @Aspect
 public class AutowiringAspect {
         
-    private final InjectionManager manager = new InjectionManager();
+    private final ResolutionManager resolver = new ResolutionManager(
+        new DirectDependencyResolver(),
+        new QualifiedDependencyResolver(),
+        new SubclassDependencyResolver());
+    
+    private final InjectionManager injector = new InjectionManager(resolver);
 
-    private AutowiringAspect() throws DediException { }
+    private AutowiringAspect() throws DediException { 
+        
+        // Hopefully, this gets garbage collected...
+        Reflections reflections = new Reflections("");
+        
+        for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
+            resolver.register(type);
+        }
+    }
 
-    @Pointcut("execution((!com.misha.dedi.container..*).new(..))")
+    @Pointcut("execution(*.new(..))")
     public void construction() { }
     
     @Pointcut("cflow(within(!com.misha.dedi.container..*))")
     public void external() { }
-                
-    @Pointcut("get(@com.misha.dedi.container.annotations.Autowired * *) && @annotation(autowired)")
-    public void access(Autowired autowired) { }
 
-    @Before("construction() && this(target)")
-    public void eagerlyInject(Object target) throws DediException {
+    @Pointcut("get(@com.misha.dedi.container.annotations.Autowired * *)")
+    public void access() { }
+    
+    @Before("external() && construction() && this(target)")
+    public void eagerlyInjectObject(Object target) throws DediException {        
         for (Field field : target.getClass().getDeclaredFields()) {
-            manager.eagerlyInject(target, field);             
+            injector.eagerlyInject(target, field);             
         }
     }
 
-    @Before("access(autowired) && external()")
-    public void lazilyInject(Autowired autowired, JoinPoint thisJoinPoint) 
+    @Before("external() && access()")
+    public void lazilyInjectField(JoinPoint thisJoinPoint) 
         throws DediException {
 
         FieldSignature fs = (FieldSignature) thisJoinPoint.getSignature();
         Field field = fs.getField();
         Object target = thisJoinPoint.getTarget();
-        manager.lazilyInject(target, field);
+        injector.lazilyInject(target, field);
     }   
 }

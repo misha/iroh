@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.Multimap;
 import com.misha.dedi.container.annotations.Autowired;
 import com.misha.dedi.container.exceptions.NoSuchQualifierException;
 import com.misha.dedi.container.sources.Source;
@@ -13,11 +12,9 @@ public class QualifiedDependencyResolver implements DependencyResolver {
 
     private final Map<String, Source> qualified = new HashMap<>();
     
-    public void initialize(Multimap<Class<?>, Source> sources) {
-        for (Source source : sources.values()) {
-            if (!source.getQualifier().equals("")) {
-                qualified.put(source.getQualifier(), source);
-            }
+    public void register(Source source) {
+        if (!source.getQualifier().equals("")) {
+            qualified.put(source.getQualifier(), source);
         }
     }
     

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.misha.dedi.container.exceptions.DediException;
 import com.misha.dedi.container.exceptions.UnexpectedImplementationCountException;
@@ -11,11 +12,11 @@ import com.misha.dedi.container.sources.Source;
 
 public class SubclassDependencyResolver implements DependencyResolver {
 
-    private Multimap<Class<?>, Source> sources;
+    private Multimap<Class<?>, Source> sources = HashMultimap.create();
     
     @Override
-    public void initialize(Multimap<Class<?>, Source> sources) {
-        this.sources = sources;
+    public void register(Source source) {
+        sources.put(source.getType(), source);
     }
 
     @Override
@@ -26,9 +27,7 @@ public class SubclassDependencyResolver implements DependencyResolver {
         for (Class<?> type : sources.keySet()) {
             if (target.isAssignableFrom(type)) {
                 for (Source source : sources.get(type)) {
-                    if (source.isConcrete()) {
-                        potential.add(source);
-                    }
+                    potential.add(source);                 
                 }
             }
         }

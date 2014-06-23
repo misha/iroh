@@ -13,8 +13,6 @@ public abstract class Source {
         
     private final Class<?> type;
     
-    private final boolean concrete;
-    
     private final boolean prototype;
     
     private final String qualifier;
@@ -25,11 +23,10 @@ public abstract class Source {
         throws NonConcreteComponentClassException {
         
         this.type = type;
-        this.concrete = isConcrete(type.getModifiers()); 
         this.prototype = component.scope().equals("prototype");
         this.qualifier = component.qualifier();
         
-        if (!isConcrete()) {
+        if (!isConcrete(type.getModifiers())) {
             throw new NonConcreteComponentClassException(type);
         }
     }
@@ -65,10 +62,6 @@ public abstract class Source {
     
     public final Class<?> getType() {
         return type;
-    }
-    
-    public final boolean isConcrete() {
-        return concrete;
     }
     
     private final static boolean isConcrete(int modifiers) {
