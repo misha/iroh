@@ -1,4 +1,4 @@
-package com.misha.dedi.tests.examples.prime;
+package com.misha.dedi.examples.prime;
 
 import java.util.Iterator;
 
