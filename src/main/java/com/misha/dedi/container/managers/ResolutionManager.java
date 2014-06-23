@@ -13,7 +13,7 @@ import com.misha.dedi.container.resolvers.QualifiedDependencyResolver;
 import com.misha.dedi.container.resolvers.SubclassDependencyResolver;
 import com.misha.dedi.container.sources.Source;
 
-public class DependencyResolverManager {
+public class ResolutionManager {
 
     @SuppressWarnings("serial")
     private List<DependencyResolver> resolvers = 
@@ -25,7 +25,7 @@ public class DependencyResolverManager {
             }
         };
     
-    public DependencyResolverManager(Multimap<Class<?>, Source> sources) {
+    public ResolutionManager(Multimap<Class<?>, Source> sources) {
         for (DependencyResolver resolver : resolvers) {
             resolver.initialize(sources);
         }

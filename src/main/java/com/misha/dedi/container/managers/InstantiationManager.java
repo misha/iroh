@@ -17,15 +17,15 @@ import com.misha.dedi.container.sources.MethodSource;
 import com.misha.dedi.container.sources.Source;
 import com.misha.dedi.container.sources.TypeSource;
 
-public class SourceManager {
+public class InstantiationManager {
     
-    private final DependencyResolverManager resolver;
+    private final ResolutionManager resolver;
     
     private final Multimap<Class<?>, Source> sources = HashMultimap.create();
     
     private final Reflections reflections = new Reflections("");
 
-    public SourceManager() throws DediException {
+    public InstantiationManager() throws DediException {
         for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
             Source typeSource = new TypeSource(type);
             sources.put(typeSource.getType(), typeSource);
@@ -41,7 +41,7 @@ public class SourceManager {
         }
         
         checkForCycles();
-        resolver = new DependencyResolverManager(sources);
+        resolver = new ResolutionManager(sources);
     }
     
     public Class<?> getImplementingType(Field field) throws DediException {

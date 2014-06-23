@@ -14,7 +14,7 @@ public class InjectionManager {
     
     private final Map<Class<?>, Object> nulls = new HashMap<>();
 
-    private final SourceManager manager = new SourceManager();
+    private final InstantiationManager instantiator = new InstantiationManager();
 
     private final Objenesis objenesis = new ObjenesisStd(true);
 
@@ -50,7 +50,7 @@ public class InjectionManager {
         throws DediException {
 
         try {
-            field.set(target, manager.getInstance(field));
+            field.set(target, instantiator.getInstance(field));
         
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);        
@@ -83,7 +83,7 @@ public class InjectionManager {
         Class<?> type = field.getType();
         
         if (!nulls.containsKey(type)) {
-            nulls.put(type, objenesis.newInstance(manager.getImplementingType(field)));
+            nulls.put(type, objenesis.newInstance(instantiator.getImplementingType(field)));
         }
         
         try {
