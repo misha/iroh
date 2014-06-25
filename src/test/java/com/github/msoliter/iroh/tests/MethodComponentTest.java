@@ -11,22 +11,26 @@ import com.github.msoliter.iroh.container.annotations.Component;
  */
 public class MethodComponentTest {
 
-    static int count = 0;
+    private static int count = 0;
+    
+    public static class Dependency {
+        
+    }
     
     @Component
     public static class DependencyFactory {
      
         @Component
-        public Object object() {
+        public Dependency object() {
             count += 1;
-            return new Object();
+            return new Dependency();
         }
     }
     
     public static class Container {
         
         @Autowired
-        public Object dependency;
+        public Dependency dependency;
     }
     
     @Test

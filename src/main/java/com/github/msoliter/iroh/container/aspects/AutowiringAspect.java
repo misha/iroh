@@ -12,7 +12,6 @@ import org.reflections.Reflections;
 import com.github.msoliter.iroh.container.annotations.Component;
 import com.github.msoliter.iroh.container.managers.InjectionManager;
 import com.github.msoliter.iroh.container.managers.ResolutionManager;
-import com.github.msoliter.iroh.container.resolvers.DirectDependencyResolver;
 import com.github.msoliter.iroh.container.resolvers.QualifiedDependencyResolver;
 import com.github.msoliter.iroh.container.resolvers.SubclassDependencyResolver;
 
@@ -20,7 +19,6 @@ import com.github.msoliter.iroh.container.resolvers.SubclassDependencyResolver;
 public class AutowiringAspect {
         
     private final ResolutionManager resolver = new ResolutionManager(
-        new DirectDependencyResolver(),
         new QualifiedDependencyResolver(),
         new SubclassDependencyResolver());
     
