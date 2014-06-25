@@ -63,7 +63,7 @@ public class ResolutionManager {
     private void checkForCycles(Class<?> target, Class<?> in, Stack<Class<?>> trace) 
         throws DependencyCycleException {
         
-        for (Field field : in.getDeclaredFields()) {            
+        for (Field field : in.getDeclaredFields()) {  
             if (field.getAnnotation(Autowired.class) != null) {
                 Class<?> type = field.getType();
                 trace.push(type);
