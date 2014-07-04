@@ -1,10 +1,10 @@
-package com.github.msoliter.iroh.examples.stub;
+package com.github.msoliter.iroh.examples.network;
 
 import com.github.msoliter.iroh.container.annotations.Component;
-import com.github.msoliter.iroh.examples.stub.StubExampleConfiguration.NetworkAPI;
+import com.github.msoliter.iroh.examples.network.NetworkServiceConfiguration.NetworkAPI;
 
 @Component
-public class StubExampleTestConfiguration {
+public class NetworkServiceTestConfiguration {
 
     @Component(override = true)
     public NetworkAPI stubNetworkApi() {

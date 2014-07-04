@@ -1,4 +1,4 @@
-package com.github.msoliter.iroh.examples.stub;
+package com.github.msoliter.iroh.examples.network;
 
 import java.io.IOException;
 

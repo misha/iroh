@@ -21,6 +21,6 @@ public @interface Component {
     public String scope() default "singleton";
     
     /* Whether or not this component should override an existing definition of
-     * a component with the same type. */
+     * a component with the same type. Primarily used for unit testing. */
     public boolean override() default false;
 }

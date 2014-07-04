@@ -1,11 +1,11 @@
-package com.github.msoliter.iroh.examples.stub;
+package com.github.msoliter.iroh.examples.network;
 
 import java.io.IOException;
 
 import com.github.msoliter.iroh.container.annotations.Component;
 
 @Component
-public class StubExampleConfiguration {
+public class NetworkServiceConfiguration {
 
     public static class NetworkAPI {
         
