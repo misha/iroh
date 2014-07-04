@@ -1,6 +1,5 @@
 package com.github.msoliter.iroh.container.sources;
 
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +26,6 @@ public abstract class Source {
         this.prototype = component.scope().equals("prototype");
         this.qualifier = component.qualifier();
         this.override = component.override();
-        
-        if (!isConcrete(type.getModifiers())) {
-            throw new NonConcreteComponentClassException(type);
-        }
     }
     
     public Object getInstance() {
@@ -68,11 +63,5 @@ public abstract class Source {
     
     public final boolean isOverriding() {
         return override;
-    }
-    
-    private final static boolean isConcrete(int modifiers) {
-        return
-            !Modifier.isAbstract(modifiers) &&
-            !Modifier.isInterface(modifiers);
     }
 }
