@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.annotations.Component;
+import com.github.msoliter.iroh.container.annotations.Scope;
 
 public class PrototypeScopeTest {
     
@@ -14,7 +15,7 @@ public class PrototypeScopeTest {
     @Autowired
     public PrototypeObject p1;
     
-    @Component(scope = "prototype")
+    @Component(scope = Scope.PROTOTYPE)
     public static class PrototypeObject {
         
     }

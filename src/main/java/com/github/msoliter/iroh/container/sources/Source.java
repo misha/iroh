@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.msoliter.iroh.container.annotations.Component;
+import com.github.msoliter.iroh.container.annotations.Scope;
 import com.github.msoliter.iroh.container.exceptions.FailedConstructionException;
 import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentClassException;
 
@@ -41,7 +42,7 @@ public abstract class Source {
         throws NonConcreteComponentClassException {
         
         this.type = type;
-        this.prototype = component.scope().equals("prototype");
+        this.prototype = component.scope() == Scope.PROTOTYPE;
         this.qualifier = component.qualifier();
         this.override = component.override();
     }

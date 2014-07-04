@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.annotations.Component;
+import com.github.msoliter.iroh.container.annotations.Scope;
 
 public class NestedResolutionTest {
 
@@ -17,7 +18,7 @@ public class NestedResolutionTest {
     @Component
     public static class Factory {
         
-        @Component(scope = "prototype")
+        @Component(scope = Scope.PROTOTYPE)
         public Oobject object() {
             count += 1;
             return new Oobject();

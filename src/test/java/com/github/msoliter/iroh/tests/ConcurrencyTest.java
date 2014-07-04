@@ -5,25 +5,26 @@ import org.junit.Test;
 
 import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.annotations.Component;
+import com.github.msoliter.iroh.container.annotations.Scope;
 
 /**
  * Attempts to crack open any concurrency problems inside the framework.
  */
 public class ConcurrencyTest {
 
-    @Component(scope = "prototype")
+    @Component(scope = Scope.PROTOTYPE)
     public static class A {
         
     }
     
-    @Component(scope = "prototype")
+    @Component(scope = Scope.PROTOTYPE)
     public static class B {
         
         @Autowired
         public A a;
     }
     
-    @Component(scope = "prototype")
+    @Component(scope = Scope.PROTOTYPE)
     public static class C {
         
         @Autowired
@@ -33,7 +34,7 @@ public class ConcurrencyTest {
         public B b;
     }
     
-    @Component(scope = "prototype")
+    @Component(scope = Scope.PROTOTYPE)
     public static class D {
         
         @Autowired

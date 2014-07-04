@@ -36,7 +36,7 @@ public @interface Component {
     public String qualifier() default "";
 
     /* The scope of the component - 'singleton' or 'prototype'. */
-    public String scope() default "singleton";
+    public Scope scope() default Scope.SINGLETON;
     
     /* Whether or not this component should override an existing definition of
      * a component with the same type. Primarily used for unit testing. */

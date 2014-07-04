@@ -5,13 +5,14 @@ import org.junit.Test;
 
 import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.annotations.Component;
+import com.github.msoliter.iroh.container.annotations.Scope;
 
 /**
  * Tests that objects are never autowired twice.
  */
 public class NoDoubleInjectionTest {
 
-    @Component(scope = "prototype")
+    @Component(scope = Scope.PROTOTYPE)
     public static class Dependency {
         
     }
