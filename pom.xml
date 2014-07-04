@@ -26,7 +26,7 @@
   </licenses>
   <scm>
     <url>https://github.com/msoliter/iroh</url>
-    <connection>https://github.com/msoliter/iroh</connection>
+    <connection>https://github.com/msoliter/iroh.git</connection>
   </scm>
   <dependencies>
     <dependency>
