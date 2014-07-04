@@ -1,6 +1,6 @@
 # Iroh
 
-Iroh is a lightweight, principled dependency injection container. Its system is dead simple, employing only two annotations with only the most basic options. Iroh is well-tested, comes with samples, provides a complete sample project, and implements optional **lazy injection** for injected components, a rare feature among DI containers.
+Iroh is a lightweight, principled dependency injection container. Its system is dead simple, employing only two Spring-inspired annotations with only the most basic options. Iroh is well-tested, comes with samples, provides a complete sample project, and implements optional **lazy injection** for injected components, a rare feature among DI containers.
 
 Iroh is implemented using AspectJ. Check out the example POM [here](https://github.com/msoliter/iroh/blob/master/example/pom.xml) for details on how to integrate with Maven.
 
@@ -136,7 +136,21 @@ public @interface Autowired {
 }
 ```
 
-### Questions, Bugs, Comments
+## Testing
+
+Check out the repository and hit `mvn clean install` in the root directory.
+
+## Background
+
+I wrote Iroh after six months of learning and developing with dependency injection. I believe that it's a beautiful tool for software engineering, allowing for an elegant organization of dependencies without the management hassle. I learned a bit about Java's reflection library and aspect-oriented programming in the process.
+
+**Should you use Iroh for work?** Probably not. I'm just one person, and cannot support a company if you choose to adopt Iroh to perform some heavy lifting.
+
+**Should you use Iroh to learn dependency injection, and then move to a more stable container?** Absolutely. Iroh's no-frills approach will greatly accelerate your learning process.
+
+**Can I contribute?** There's not much *to* contribute, aside from more examples and tests. All the features I wanted to implement are implemented. If you find a bug, feel free to report it, open an issue, or better yet, write a test for it and open a pull request.
+
+## Questions, Bugs, Comments
 
 If you have questions or comments, feel free to e-mail [me](https://github.com/msoliter). For bug reports, please either e-mail me or [open](https://github.com/msoliter/iroh/issues/new) up an issue.
 
