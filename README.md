@@ -148,9 +148,9 @@ I wrote Iroh after six months of learning and developing with dependency injecti
 
 **Should you use Iroh to learn dependency injection, and then move to a more stable container?** Absolutely. Iroh's no-frills approach will greatly accelerate your learning process.
 
-**Can I contribute?** There's not much *to* contribute, aside from more examples and tests. All the features I wanted to implement are implemented. If you find a bug, feel free to report it, open an issue, or better yet, write a test for it and open a pull request.
+**Can I contribute?** There's not much *to* contribute, aside from more examples and tests. All the features I wanted to implement are implemented. If you find a bug, feel free to report it, [open an issue](https://github.com/msoliter/iroh/issues/new), or better yet, write a test for it and open a pull request.
 
-## Questions, Bugs, Comments
+## Questions, Comments
 
-If you have questions or comments, feel free to e-mail [me](https://github.com/msoliter). For bug reports, please either e-mail me or [open](https://github.com/msoliter/iroh/issues/new) up an issue.
+If you have questions or comments, feel free to e-mail [me](https://github.com/msoliter).
 
