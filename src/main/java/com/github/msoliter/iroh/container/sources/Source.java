@@ -9,12 +9,14 @@ import com.github.msoliter.iroh.container.exceptions.FailedConstructionException
 import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentClassException;
 
 public abstract class Source {
-        
+
     private final Class<?> type;
     
     private final boolean prototype;
     
     private final String qualifier;
+    
+    private final boolean override;
     
     private final Map<Class<?>, Object> cache = new HashMap<>();
     
@@ -24,6 +26,7 @@ public abstract class Source {
         this.type = type;
         this.prototype = component.scope().equals("prototype");
         this.qualifier = component.qualifier();
+        this.override = component.override();
         
         if (!isConcrete(type.getModifiers())) {
             throw new NonConcreteComponentClassException(type);
@@ -61,6 +64,10 @@ public abstract class Source {
     
     public final Class<?> getType() {
         return type;
+    }
+    
+    public final boolean isOverriding() {
+        return override;
     }
     
     private final static boolean isConcrete(int modifiers) {

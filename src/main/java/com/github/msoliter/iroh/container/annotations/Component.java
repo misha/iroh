@@ -13,10 +13,14 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Component {
+    
+    /* This component's qualifier, if its supertype has many implementations. */
+    public String qualifier() default "";
 
     /* The scope of the component - 'singleton' or 'prototype'. */
     public String scope() default "singleton";
     
-    /* This component's qualifier, if its supertype has many implementations. */
-    public String qualifier() default "";
+    /* Whether or not this component should override an existing definition of
+     * a component with the same type. */
+    public boolean override() default false;
 }

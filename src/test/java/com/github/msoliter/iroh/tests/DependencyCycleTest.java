@@ -1,9 +1,13 @@
 package com.github.msoliter.iroh.tests;
-//package com.misha.dedi.tests;
-//
-//import com.misha.dedi.container.annotations.Autowired;
-//import com.misha.dedi.container.annotations.Component;
-//
+
+/**
+ * Exception while initializing com.github.msoliter.iroh.container.aspects.AutowiringAspect: 
+ *  com.github.msoliter.iroh.container.exceptions.DependencyCycleException: 
+ *      A dependency cycle was detected: 
+ *          class com.github.msoliter.iroh.tests.DependencyCycleTest$A => 
+ *          class com.github.msoliter.iroh.tests.DependencyCycleTest$B => 
+ *          class com.github.msoliter.iroh.tests.DependencyCycleTest$A.
+ */
 //public class DependencyCycleTest {
 //
 //    @Component
@@ -19,4 +23,7 @@ package com.github.msoliter.iroh.tests;
 //        @Autowired
 //        private A a;
 //    }
+//    
+//    @Test
+//    public void test() { }
 //}

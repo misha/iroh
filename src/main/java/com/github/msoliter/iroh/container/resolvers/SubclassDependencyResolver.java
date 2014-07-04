@@ -41,10 +41,23 @@ public class SubclassDependencyResolver implements DependencyResolver {
         }
 
         if (potential.size() != 1) {
-            throw new UnexpectedImplementationCountException(
-                target, 
-                potential.size());
-        
+            Set<Source> overriding = new HashSet<>();
+            
+            for (Source source : potential) {
+                if (source.isOverriding()) {
+                    overriding.add(source);
+                }
+            }
+            
+            if (overriding.size() != 1) {              
+                throw new UnexpectedImplementationCountException(
+                    target, 
+                    potential.size());
+                
+            } else {
+                return overriding.iterator().next();
+            }
+            
         } else {
             return potential.iterator().next();
         }
