@@ -6,10 +6,28 @@
   <version>0.1.0</version>
   <packaging>jar</packaging>
   <name>iroh</name>
-  <description>Lightweight, principled dependency injection.</description>
+  <description>Lightweight, principled dependency injection container.</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  <developers>
+    <developer>
+        <id>msoliter</id>
+        <name>Misha</name>
+        <email>msoliter@gmail.com</email>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/msoliter/iroh</url>
+    <connection>https://github.com/msoliter/iroh</connection>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>org.aspectj</groupId>
