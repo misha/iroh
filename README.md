@@ -113,7 +113,7 @@ public @interface Component {
 
 You may use the `@Autowired` annotation on any field. The type containing dependencies doesn't need to have an `@Component` annotation. `@Autowired` annotations on constructors are on the drawing board, and will be implemented on request.
 
-Due to its aspect-oriented nature, Iroh can also inject dependencies into any types with `@Autowired` annotations instantiated using normal Java allocation (the `new` keyword). Similarly, Iroh will happily inject static fields annotated with `@Autowired` upon the first instantiation of a type. This differs from some other containers, which forbid injection of static fields because their object graphs excludes the Java type system itself.
+Due to its aspect-oriented nature, Iroh can also inject dependencies into any types with `@Autowired` annotations instantiated using normal Java allocation (the `new` keyword). Similarly, Iroh will happily inject static fields annotated with `@Autowired` upon the first instantiation of a type. This differs from some other containers, which forbid injection of static fields because their object graphs exclude the Java type system itself.
 
 Here's a copy-paste of the class definition, which explicitly describes the available options:
 
