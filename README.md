@@ -150,7 +150,7 @@ I wrote Iroh after six months of learning and developing with dependency injecti
 
 **Can I contribute?** There's not much *to* contribute, aside from more examples and tests. All the features I wanted to implement are implemented. If you find a bug, feel free to report it, [open an issue](https://github.com/msoliter/iroh/issues/new), or better yet, write a test for it and open a pull request.
 
-**Iroh?** The name of my favorite TLA character. Learning dependency injection should be as easy as a cup of tea.
+**Iroh?** My favorite TLA character. Learning dependency injection should be as easy as a cup of tea.
 
 ## Questions, Comments
 
