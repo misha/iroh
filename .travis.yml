@@ -2,4 +2,4 @@ language: java
 notifications:
   email:
     - msoliter@gmail.com
-before_install: mvn clean
+script: "mvn clean test -B"
