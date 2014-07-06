@@ -142,7 +142,7 @@ Check out the repository and hit `mvn clean install` in the root directory.
 
 ## Background
 
-I wrote Iroh after six months of learning and developing with dependency injection. I believe that it's a beautiful tool for software engineering, allowing for an elegant organization of dependencies without the management hassle. I learned a bit about Java's reflection library and aspect-oriented programming in the process.
+I wrote Iroh after six months of learning and developing with dependency injection. I believe that it's a beautiful tool for software engineering, allowing for an elegant organization of dependencies without the management hassle. I learned a bit about Java's reflection library, aspect-oriented programming, and licensing/releasing open source software in the process.
 
 **Should you use Iroh for work?** Probably not. I'm just one person, and cannot support a company if you choose to adopt Iroh to perform some heavy lifting.
 
