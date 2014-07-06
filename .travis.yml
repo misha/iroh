@@ -1,1 +1,5 @@
 language: java
+notifications:
+  email:
+    - msoliter@gmail.com
+before_install: clean
