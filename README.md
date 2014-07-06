@@ -1,4 +1,4 @@
-# Iroh
+# Iroh [![Build Status](https://travis-ci.org/msoliter/iroh.svg?branch=master)](https://travis-ci.org/msoliter/iroh)
 
 Iroh is a lightweight, principled dependency injection container. Its system is dead simple, employing only two Spring-inspired annotations with only the most basic options. Iroh is well-tested, comes with samples, provides a complete sample project, and implements optional **lazy injection** for injected components, a rare feature among DI containers.
 
@@ -135,10 +135,6 @@ public @interface Autowired {
     public boolean lazy() default false;
 }
 ```
-
-## Testing
-
-Check out the repository and hit `mvn clean install` in the root directory.
 
 ## Background
 
