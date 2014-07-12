@@ -33,18 +33,28 @@ import com.github.msoliter.iroh.container.resolvers.SubclassDependencyResolver;
 import com.github.msoliter.iroh.container.services.Injector;
 import com.github.msoliter.iroh.container.services.Registrar;
 
+/**
+ * The aspect responsible for hooking into constructor calls and field accesses
+ * so that the dependency injection container may perform the correct operations
+ * at the required locations.
+ */
 @Aspect
-public class AutowiringAspect {
+public class IrohAspect {
         
+    /* A registrar responsible for managing all registered components. */
     private final Registrar registrar = new Registrar(
         new QualifiedDependencyResolver(),
         new SubclassDependencyResolver());
     
+    /* An injector featuring lazy and eager injection methods. */
     private final Injector injector = new Injector(registrar);
 
-    private AutowiringAspect() { 
-        
-        // Hopefully, this gets garbage collected...
+    /**
+     * Constructs the Iroh aspect by scanning the class path for 
+     * {@link com.github.msoliter.iroh.container.annotations.Component} 
+     * annotations and registering them for injection.
+     */
+    private IrohAspect() {         
         Reflections reflections = new Reflections("");
         
         for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
@@ -52,15 +62,34 @@ public class AutowiringAspect {
         }
     }
 
+    /**
+     * A pointcut representing the start of execution of a new constructor.
+     */
     @Pointcut("execution(*.new(..))")
     public void construction() { }
     
+    /**
+     * A pointcut representing any operation outside the control flow of Iroh.
+     */
     @Pointcut("cflow(within(!com.github.msoliter.iroh.container..*))")
     public void external() { }
 
+    /**
+     * A pointcut representing any field access of a field carrying an
+     * {@link @Autowired} annotation.
+     */
     @Pointcut("get(@com.github.msoliter.iroh.container.annotations.Autowired * *)")
     public void access() { }
     
+    /**
+     * Aspect advice triggered prior to the construction of all objects. If the
+     * type contains any 
+     * {@link com.github.msoliter.iroh.container.annotations.Autowired} fields 
+     * not marked for lazy injection, this advice will properly initialize 
+     * those fields prior to the constructor's code.
+     * 
+     * @param target The target of construction.
+     */
     @Before("external() && construction() && this(target)")
     public void eagerlyInjectObject(Object target) {        
         for (Field field : target.getClass().getDeclaredFields()) {
@@ -68,6 +97,16 @@ public class AutowiringAspect {
         }
     }
 
+    /**
+     * Aspect advice triggered on the access of all fields carrying an
+     * {@link com.github.msoliter.iroh.container.annotations.Autowired} 
+     * annotation. If the field has been marked for lazy injection, and has not 
+     * been injected with an instance yet, this advice will properly initialize 
+     * that field.
+     * 
+     * @param thisJoinPoint The join point carrying critical information about
+     *  which field is being accessed, as well as its current contents.
+     */
     @Before("external() && access()")
     public void lazilyInjectField(JoinPoint thisJoinPoint) {
         FieldSignature fs = (FieldSignature) thisJoinPoint.getSignature();

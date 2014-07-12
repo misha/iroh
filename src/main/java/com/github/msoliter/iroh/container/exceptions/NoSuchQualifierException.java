@@ -21,8 +21,8 @@ package com.github.msoliter.iroh.container.exceptions;
 import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
 /**
- * Thrown when a qualifier that does not exist is used in an {@link @Autowired} 
- * annotation.
+ * Thrown when a qualifier that does not exist is used in an 
+ * {@link com.github.msoliter.iroh.container.annotations.Autowired} annotation.
  */
 public class NoSuchQualifierException extends IrohException {
 

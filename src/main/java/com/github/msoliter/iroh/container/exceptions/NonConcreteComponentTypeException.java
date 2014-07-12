@@ -21,7 +21,8 @@ package com.github.msoliter.iroh.container.exceptions;
 import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
 /**
- * Thrown when a non-concrete type is designated as an {@link @Component}.
+ * Thrown when a non-concrete type is designated as an 
+ * {@link com.github.msoliter.iroh.container.annotations.@Component}.
  */
 public class NonConcreteComponentTypeException extends IrohException {
 

@@ -22,8 +22,9 @@ import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 import com.google.common.base.Joiner;
 
 /**
- * Thrown when two {@link @Component}-annotated types are designated with the 
- * same qualifier.
+ * Thrown when two 
+ * {@link com.github.msoliter.iroh.container.annotations.Component}-annotated 
+ * types are designated with the same qualifier.
  */
 public class DuplicateQualifierException extends IrohException {
 

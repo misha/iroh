@@ -33,6 +33,11 @@ public class FailedConstructionException extends IrohException {
     private static final String format = 
         "Injection failed due to an error during object instantiation.";
     
+    /**
+     * Constructs an exception from the given construction failure cause.
+     * 
+     * @param cause The exception that caused construction to fail.
+     */
     public FailedConstructionException(Throwable cause) {
         super(String.format(format), cause);
     }

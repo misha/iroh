@@ -21,10 +21,11 @@ package com.github.msoliter.iroh.container.exceptions;
 import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
 /**
- * Represents an exception thrown when an {@link @Autowired} type did not have 
- * a suitable constructor. In general, that means the no-argument constructor 
- * was missing or otherwise blocked (in the case of a hard-coded constructor 
- * or an enumeration).
+ * Represents an exception thrown when an 
+ * {@link com.github.msoliter.iroh.container.annotations.Autowired} type did 
+ * not have a suitable constructor. In general, that means the no-argument 
+ * constructor was missing or otherwise blocked (in the case of a hard-coded 
+ * constructor or an enumeration).
  */
 public class NoZeroArgumentConstructorException extends IrohException {
 
@@ -38,8 +39,9 @@ public class NoZeroArgumentConstructorException extends IrohException {
     /**
      * Constructs an exception for the given type.
      * 
-     * @param type The {@link @Autowired} type lacking a zero-argument 
-     *  constructor.
+     * @param type The 
+     *  {@link com.github.msoliter.iroh.container.annotations.Autowired} type 
+     *  lacking a zero-argument constructor.
      */
     public NoZeroArgumentConstructorException(Class<?> type) {
         super(String.format(format, type));

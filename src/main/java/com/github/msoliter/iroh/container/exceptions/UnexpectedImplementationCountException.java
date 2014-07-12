@@ -24,9 +24,10 @@ import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 import com.google.common.base.Joiner;
 
 /**
- * Represents an exception thrown when a base type is {@link @Autowired}, but 
- * there appears to be more or less than one concrete implementation of that 
- * base type available for injection.
+ * Represents an exception thrown when a base type is 
+ * {@link com.github.msoliter.iroh.container.annotations.Autowired}, but there 
+ * appears to be more or less than one concrete implementation of that  base 
+ * type available for injection.
  */
 public class UnexpectedImplementationCountException extends IrohException {
 
