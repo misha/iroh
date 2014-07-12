@@ -29,8 +29,9 @@ import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
 /**
- * Iroh's injector, responsible for producing instances of types for lazy or
- * eager injection.
+ * Iroh's injector, responsible for producing instances of types during lazy or
+ * eager injection. It corresponds directly to the injection annotation, 
+ * {@link com.github.msoliter.iroh.container.annotations.Autowired}.
  */
 public class Injector {
     

@@ -43,7 +43,8 @@ import com.github.msoliter.iroh.container.sources.base.Source;
  * implementation. However, on top of this implementation, it adds a layer of 
  * error checking that transcends the scope of the dependency resolvers. 
  * Specifically, this is the class responsible for identifying dependency 
- * cycles.
+ * cycles. This class corresponds directly the registration annotation, 
+ * {@link com.github.msoliter.iroh.container.annotations.Component}.
  */
 public class Registrar {
 
@@ -161,7 +162,7 @@ public class Registrar {
     
     /**
      * Initiates a check for dependency cycles on the target type. This method
-     * delegates to the correct recursive subcall to 
+     * delegates to the correct recursive subcall of 
      * {@link Registrar#checkForCycles(Class, Class, Stack)}.
      * 
      * @param target The type from which to begin checking for dependency 
