@@ -18,15 +18,48 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-/**
- * Represents an exception thrown when a base type is autowired, but there
- * appears to be more than one concrete implementation of that base type
- * available for autowiring, and no qualifier exists to resolve it.
- */
-@SuppressWarnings("serial")
-public class UnexpectedImplementationCountException extends RuntimeException {
+import java.util.Collection;
 
-    public UnexpectedImplementationCountException(Class<?> type, int count) {
-        super("Expected exactly 1 implementation of type " + type + " but found " + count);
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
+import com.google.common.base.Joiner;
+
+/**
+ * Represents an exception thrown when a base type is {@link @Autowired}, but 
+ * there appears to be more or less than one concrete implementation of that 
+ * base type available for injection.
+ */
+public class UnexpectedImplementationCountException extends IrohException {
+
+    /* This exception's serial number. */
+    private static final long serialVersionUID = 6424073647507088551L;
+    
+    /* This exception's error message format for zero implementations. */
+    private static final String zeroImplementationsFormat =
+        "Expected exactly 1 implementation of type %s by found 0.";
+    
+    /* This exception's error message format for two or more implementations. */
+    private static final String multipleImplementationsFormat = 
+        "Expected exactly 1 implementation of type %s but found %d: %s.";
+    
+    /**
+     * Constructs an exception detailing exactly the implementations identified
+     * for a particular type.
+     * 
+     * @param type The type we were attempting to resolve.
+     * @param implementations A collection of all the implementing types. The
+     *  size of the collection should be zero or greater than one.
+     */
+    public UnexpectedImplementationCountException(
+        Class<?> type, 
+        Collection<Class<?>> implementations) {
+        
+        super(
+            (implementations.size() == 0) ?
+                String.format(zeroImplementationsFormat, type) :
+                String.format(
+                    multipleImplementationsFormat, 
+                    type, 
+                    implementations.size(), 
+                    Joiner.on(", ").join(implementations)));
     }
 }

@@ -18,10 +18,29 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-@SuppressWarnings("serial")
-public class DuplicateQualifierException extends RuntimeException {
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
+import com.google.common.base.Joiner;
 
-    public DuplicateQualifierException(String qualifier) {
-        super("The qualifier '" + qualifier + "' was placed on multiple types.");
+/**
+ * Thrown when two {@link @Component}-annotated types are designated with the 
+ * same qualifier.
+ */
+public class DuplicateQualifierException extends IrohException {
+
+    /* This exception's serial number. */
+    private static final long serialVersionUID = 7399991728626888167L;
+    
+    /* This exception's error message format. */
+    private static final String format = 
+        "The qualifier '%s' was placed on multiple types: %s.";
+    
+    /**
+     * Constructs an exception for the given qualifier.
+     * 
+     * @param qualifier The qualifier that was detected on multiple types.
+     * @param types An array of two or more types with this qualifier.
+     */
+    public DuplicateQualifierException(String qualifier, Class<?>... types) {
+        super(String.format(format, qualifier, Joiner.on(", ").join(types)));
     }
 }

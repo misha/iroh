@@ -18,15 +18,30 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-/**
- * Represents an exception thrown when an autowired type did not have a suitable
- * constructor. In general, that means the no-argument constructor was missing
- * or otherwise blocked (in the case of a hard-coded constructor or an enum).
- */
-@SuppressWarnings("serial")
-public class NoZeroArgumentConstructorException extends RuntimeException {
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
+/**
+ * Represents an exception thrown when an {@link @Autowired} type did not have 
+ * a suitable constructor. In general, that means the no-argument constructor 
+ * was missing or otherwise blocked (in the case of a hard-coded constructor 
+ * or an enumeration).
+ */
+public class NoZeroArgumentConstructorException extends IrohException {
+
+    /* This exception's serial number. */
+    private static final long serialVersionUID = -8108787029867746306L;
+    
+    /* This exception's error message format. */
+    private static final String format = 
+        "No zero argument constructor was found for type %s.";
+    
+    /**
+     * Constructs an exception for the given type.
+     * 
+     * @param type The {@link @Autowired} type lacking a zero-argument 
+     *  constructor.
+     */
     public NoZeroArgumentConstructorException(Class<?> type) {
-        super("No zero argument constructor was found for type " + type);
+        super(String.format(format, type));
     }
 }

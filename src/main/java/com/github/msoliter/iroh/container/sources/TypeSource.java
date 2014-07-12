@@ -23,15 +23,16 @@ import java.lang.reflect.Modifier;
 
 import com.github.msoliter.iroh.container.annotations.Component;
 import com.github.msoliter.iroh.container.exceptions.NoZeroArgumentConstructorException;
-import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentClassException;
+import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentTypeException;
+import com.github.msoliter.iroh.container.sources.base.Source;
 
 public class TypeSource extends Source {
     
-    public TypeSource(Class<?> type) throws NonConcreteComponentClassException {
+    public TypeSource(Class<?> type) {
         super(type.getAnnotation(Component.class), type);
 
         if (!isConcrete(type.getModifiers())) {
-            throw new NonConcreteComponentClassException(type);
+            throw new NonConcreteComponentTypeException(type);
         }
     }
 

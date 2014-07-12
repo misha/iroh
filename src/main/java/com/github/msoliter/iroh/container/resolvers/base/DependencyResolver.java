@@ -16,14 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.msoliter.iroh.container.exceptions;
+package com.github.msoliter.iroh.container.resolvers.base;
 
-@SuppressWarnings("serial")
-public class NonConcreteComponentClassException extends RuntimeException {
+import java.lang.reflect.Field;
 
-    public NonConcreteComponentClassException(Class<?> type) {
-        super("The type " + type + " was marked with @Component, but is " +
-            "not a concrete type. @Component may not be placed on abstract " +
-            "classes or interfaces.");
-    }
+import com.github.msoliter.iroh.container.sources.base.Source;
+
+public interface DependencyResolver {
+    
+    public void register(Source source);
+
+    public Source resolve(Field field);
 }

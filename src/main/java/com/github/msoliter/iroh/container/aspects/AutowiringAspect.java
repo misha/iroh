@@ -28,19 +28,19 @@ import org.aspectj.lang.reflect.FieldSignature;
 import org.reflections.Reflections;
 
 import com.github.msoliter.iroh.container.annotations.Component;
-import com.github.msoliter.iroh.container.managers.InjectionManager;
-import com.github.msoliter.iroh.container.managers.ResolutionManager;
 import com.github.msoliter.iroh.container.resolvers.QualifiedDependencyResolver;
 import com.github.msoliter.iroh.container.resolvers.SubclassDependencyResolver;
+import com.github.msoliter.iroh.container.services.Injector;
+import com.github.msoliter.iroh.container.services.Registrar;
 
 @Aspect
 public class AutowiringAspect {
         
-    private final ResolutionManager resolver = new ResolutionManager(
+    private final Registrar registrar = new Registrar(
         new QualifiedDependencyResolver(),
         new SubclassDependencyResolver());
     
-    private final InjectionManager injector = new InjectionManager(resolver);
+    private final Injector injector = new Injector(registrar);
 
     private AutowiringAspect() { 
         
@@ -48,7 +48,7 @@ public class AutowiringAspect {
         Reflections reflections = new Reflections("");
         
         for (Class<?> type : reflections.getTypesAnnotatedWith(Component.class)) {
-            resolver.register(type);
+            registrar.register(type);
         }
     }
 

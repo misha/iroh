@@ -20,17 +20,28 @@ package com.github.msoliter.iroh.container.exceptions;
 
 import java.util.List;
 
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 import com.google.common.base.Joiner;
 
-@SuppressWarnings("serial")
-public class DependencyCycleException extends RuntimeException {
+/**
+ * Thrown when a dependency cycle has been detected in Iroh' object graph.
+ */
+public class DependencyCycleException extends IrohException {
 
-    public DependencyCycleException(final List<Class<?>> trace) {
-        super(
-            String.format(
-                "A dependency cycle was detected: %s.",
-                Joiner
-                    .on(" => ")
-                    .join(trace)));
+    /* This exception's serial number. */
+    private static final long serialVersionUID = -3509443257035290026L;
+    
+    /* This exception's error message format. */
+    private static final String format = "A dependency cycle was detected: %s.";
+    
+    /**
+     * Constructs an exception from a dependency stack trace.
+     * 
+     * @param trace The ordered list of dependency types, where each type has
+     *  an field dependency of the previous type. The first and last types in 
+     *  the trace must be the same, by definition of a cycle.
+     */
+    public DependencyCycleException(List<Class<?>> trace) {
+        super(String.format(format, Joiner.on(" => ").join(trace)));
     }
 }

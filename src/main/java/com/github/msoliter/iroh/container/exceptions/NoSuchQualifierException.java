@@ -18,13 +18,26 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-/**
- * Thrown when an unprocessed qualifier is used in an autowired annotation.
- */
-@SuppressWarnings("serial")
-public class NoSuchQualifierException extends RuntimeException {
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
+/**
+ * Thrown when a qualifier that does not exist is used in an {@link @Autowired} 
+ * annotation.
+ */
+public class NoSuchQualifierException extends IrohException {
+
+    /* This exception's serial number. */
+    private static final long serialVersionUID = 773072201265582959L;
+    
+    /* This exception's error message format. */
+    private static final String format = "The qualifier '%s' was not found";
+    
+    /**
+     * Constructs an exception for the given qualifier.
+     * 
+     * @param qualifier The non-existent qualifier.
+     */
     public NoSuchQualifierException(String qualifier) {
-        super("The qualifier '" + qualifier + "' was not found");
+        super(String.format(format, qualifier));
     }
 }

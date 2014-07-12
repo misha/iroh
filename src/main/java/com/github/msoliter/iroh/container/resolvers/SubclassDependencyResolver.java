@@ -24,7 +24,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.github.msoliter.iroh.container.exceptions.UnexpectedImplementationCountException;
-import com.github.msoliter.iroh.container.sources.Source;
+import com.github.msoliter.iroh.container.resolvers.base.DependencyResolver;
+import com.github.msoliter.iroh.container.sources.base.Source;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -40,9 +43,7 @@ public class SubclassDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Source resolve(Field field) 
-        throws UnexpectedImplementationCountException {  
-        
+    public Source resolve(Field field) {         
         Set<Source> potential = new HashSet<>();
         Class<?> target = field.getType();
         
@@ -70,7 +71,15 @@ public class SubclassDependencyResolver implements DependencyResolver {
             if (overriding.size() != 1) {              
                 throw new UnexpectedImplementationCountException(
                     target, 
-                    potential.size());
+                    Collections2.transform(
+                        potential,
+                        new Function<Source, Class<?>>() {
+                            
+                            @Override
+                            public Class<?> apply(Source source) {
+                                return source.getType();
+                            }
+                        }));
                 
             } else {
                 return overriding.iterator().next();

@@ -18,11 +18,27 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-@SuppressWarnings("serial")
-public class BadAutowiredTypeException extends RuntimeException {
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
-    public BadAutowiredTypeException(Class<?> type) {
-        super("Failed to autowire type " + type + " because it is either " +
-            "abstract, an interface, a primitive, an array type, or void.");
+/**
+ * Thrown when a non-concrete type is designated as an {@link @Component}.
+ */
+public class NonConcreteComponentTypeException extends IrohException {
+
+    /* This exception's serial number. */
+    private static final long serialVersionUID = 6343315506417924947L;
+    
+    /* This exception's error message format. */
+    private static final String format = "The type %s was marked with " +
+        "@Component, but is not a concrete type. @Component may not be " +
+        "placed on abstract classes or interfaces.";
+    
+    /**
+     * Constructs an exception for the given type.
+     * 
+     * @param type A non-concrete type designated as a component object.
+     */
+    public NonConcreteComponentTypeException(Class<?> type) {
+        super(String.format(format, type));
     }
 }

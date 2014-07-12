@@ -16,26 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.msoliter.iroh.container.managers;
+package com.github.msoliter.iroh.container.services;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Stack;
 
 import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.annotations.Component;
 import com.github.msoliter.iroh.container.exceptions.DependencyCycleException;
-import com.github.msoliter.iroh.container.exceptions.UnresolvableFieldException;
-import com.github.msoliter.iroh.container.resolvers.DependencyResolver;
+import com.github.msoliter.iroh.container.exceptions.UnexpectedImplementationCountException;
+import com.github.msoliter.iroh.container.resolvers.base.DependencyResolver;
 import com.github.msoliter.iroh.container.sources.MethodSource;
-import com.github.msoliter.iroh.container.sources.Source;
 import com.github.msoliter.iroh.container.sources.TypeSource;
+import com.github.msoliter.iroh.container.sources.base.Source;
 
-public class ResolutionManager {
+public class Registrar {
 
     private final DependencyResolver[] resolvers;
+
+    private static final Collection<Class<?>> noImplementations = 
+        Collections.emptyList();
     
-    public ResolutionManager(DependencyResolver... resolvers) {
+    public Registrar(DependencyResolver... resolvers) {
         this.resolvers = resolvers;
     }
     
@@ -63,7 +68,9 @@ public class ResolutionManager {
             }
         }
         
-        throw new UnresolvableFieldException(field);
+        throw new UnexpectedImplementationCountException(
+            field.getType(), 
+            noImplementations);
     }
     
     private void register(Source source) {
@@ -72,14 +79,16 @@ public class ResolutionManager {
         }
     }
     
-    private void checkForCycles(Class<?> target) throws DependencyCycleException {
+    private void checkForCycles(Class<?> target) {
         Stack<Class<?>> trace = new Stack<>();
         trace.push(target);
         checkForCycles(target, target, trace);
     }
     
-    private void checkForCycles(Class<?> target, Class<?> in, Stack<Class<?>> trace) 
-        throws DependencyCycleException {
+    private void checkForCycles(
+        Class<?> target, 
+        Class<?> in, 
+        Stack<Class<?>> trace) {
         
         for (Field field : in.getDeclaredFields()) {  
             if (field.getAnnotation(Autowired.class) != null) {

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.msoliter.iroh.container.managers;
+package com.github.msoliter.iroh.container.services;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -26,17 +26,18 @@ import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
 import com.github.msoliter.iroh.container.annotations.Autowired;
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
-public class InjectionManager {
+public class Injector {
     
-    private final ResolutionManager resolver;
+    private final Registrar registrar;
 
     private final Map<Class<?>, Object> nulls = new HashMap<>();
 
     private final Objenesis objenesis = new ObjenesisStd(true);
 
-    public InjectionManager(ResolutionManager resolver) {         
-        this.resolver = resolver;
+    public Injector(Registrar registrar) {         
+        this.registrar = registrar;
     }
 
     public void eagerlyInject(Object target, Field field) {      
@@ -63,10 +64,10 @@ public class InjectionManager {
     
     private void inject(Field field, Object target) {
         try {
-            field.set(target, resolver.resolve(field).getInstance());
+            field.set(target, registrar.resolve(field).getInstance());
         
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e);        
+            throw new IrohException(e);        
         }
     }
     
@@ -78,7 +79,7 @@ public class InjectionManager {
             value = field.get(target);
             
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new IrohException(e);
         }
         
         if (nulls.containsKey(type)) {
@@ -94,14 +95,16 @@ public class InjectionManager {
         Class<?> type = field.getType();
         
         if (!nulls.containsKey(type)) {
-            nulls.put(type, objenesis.newInstance(resolver.resolve(field).getType()));
+            nulls.put(
+                type, 
+                objenesis.newInstance(registrar.resolve(field).getType()));
         }
         
         try {
             field.set(target, nulls.get(type));
             
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e);        
+            throw new IrohException(e);        
         }
     }
 }

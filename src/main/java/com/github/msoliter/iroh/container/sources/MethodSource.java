@@ -21,7 +21,7 @@ package com.github.msoliter.iroh.container.sources;
 import java.lang.reflect.Method;
 
 import com.github.msoliter.iroh.container.annotations.Component;
-import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentClassException;
+import com.github.msoliter.iroh.container.sources.base.Source;
 
 public class MethodSource extends Source {
 
@@ -29,9 +29,7 @@ public class MethodSource extends Source {
     
     private final Source declarer;
     
-    public MethodSource(Source declarer, Method method) 
-        throws NonConcreteComponentClassException {
-        
+    public MethodSource(Source declarer, Method method) {
         super(method.getAnnotation(Component.class), method.getReturnType());
         this.method = method;
         this.declarer = declarer;

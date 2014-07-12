@@ -25,18 +25,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.exceptions.DuplicateQualifierException;
 import com.github.msoliter.iroh.container.exceptions.NoSuchQualifierException;
-import com.github.msoliter.iroh.container.sources.Source;
+import com.github.msoliter.iroh.container.resolvers.base.DependencyResolver;
+import com.github.msoliter.iroh.container.sources.base.Source;
 
 public class QualifiedDependencyResolver implements DependencyResolver {
 
     private final Map<String, Source> qualified = new ConcurrentHashMap<>();
     
-    public void register(Source source) throws DuplicateQualifierException {
+    public void register(Source source) {
         String qualifier = source.getQualifier();
         
         if (!qualifier.equals("")) {
             if (qualified.containsKey(qualifier)) {
-                throw new DuplicateQualifierException(qualifier);
+                throw new DuplicateQualifierException(
+                    qualifier,
+                    qualified.get(qualifier).getType(),
+                    source.getType());
             
             } else {
                 qualified.put(source.getQualifier(), source);
@@ -45,7 +49,7 @@ public class QualifiedDependencyResolver implements DependencyResolver {
     }
     
     @Override
-    public Source resolve(Field field) throws NoSuchQualifierException {      
+    public Source resolve(Field field) {      
         Autowired autowired = field.getAnnotation(Autowired.class);
         String qualifier = autowired.qualifier();
         

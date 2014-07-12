@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.msoliter.iroh.container.sources;
+package com.github.msoliter.iroh.container.sources.base;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Map;
 import com.github.msoliter.iroh.container.annotations.Component;
 import com.github.msoliter.iroh.container.annotations.Scope;
 import com.github.msoliter.iroh.container.exceptions.FailedConstructionException;
-import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentClassException;
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
 public abstract class Source {
 
@@ -38,9 +38,7 @@ public abstract class Source {
     
     private final Map<Class<?>, Object> cache = new HashMap<>();
     
-    protected Source(Component component, Class<?> type) 
-        throws NonConcreteComponentClassException {
-        
+    protected Source(Component component, Class<?> type) {        
         this.type = type;
         this.prototype = component.scope() == Scope.PROTOTYPE;
         this.qualifier = component.qualifier();
@@ -62,7 +60,7 @@ public abstract class Source {
                 }
             }
             
-        } catch (RuntimeException e) {
+        } catch (IrohException e) {
             throw e;
             
         } catch (Exception e) {

@@ -18,10 +18,22 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-@SuppressWarnings("serial")
-public class FailedConstructionException extends RuntimeException {
+import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 
+/**
+ * Thrown when an error during object instantiation occurs. The most common 
+ * cause is an exception thrown in the constructor of a component type.
+ */
+public class FailedConstructionException extends IrohException {
+
+    /* This exception's serial number. */
+    private static final long serialVersionUID = 6874503833663604131L;
+    
+    /* This exception's error message format. */
+    private static final String format = 
+        "Injection failed due to an error during object instantiation.";
+    
     public FailedConstructionException(Throwable cause) {
-        super(cause);
+        super(String.format(format), cause);
     }
 }
