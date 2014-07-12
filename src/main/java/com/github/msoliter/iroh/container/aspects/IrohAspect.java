@@ -76,7 +76,8 @@ public class IrohAspect {
 
     /**
      * A pointcut representing any field access of a field carrying an
-     * {@link @Autowired} annotation.
+     * {@link com.github.msoliter.iroh.container.annotations.Autowired} 
+     * annotation.
      */
     @Pointcut("get(@com.github.msoliter.iroh.container.annotations.Autowired * *)")
     public void access() { }
