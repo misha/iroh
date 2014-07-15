@@ -1,4 +1,4 @@
-# Iroh [![Build Status](https://travis-ci.org/msoliter/iroh.svg?branch=master)](https://travis-ci.org/msoliter/iroh) [![Coverage Status](https://img.shields.io/coveralls/msoliter/iroh.svg)](https://coveralls.io/r/msoliter/iroh?branch=master) [![Stories in Ready](https://badge.waffle.io/msoliter/iroh.png?label=ready&title=Ready)](https://waffle.io/msoliter/iroh)
+# Iroh [![Build Status](https://travis-ci.org/msoliter/iroh.svg?branch=master)](https://travis-ci.org/msoliter/iroh) [![Coverage Status](https://img.shields.io/coveralls/msoliter/iroh.svg)](https://coveralls.io/r/msoliter/iroh?branch=master)
 
 Iroh is a lightweight, principled dependency injection container. Its system is dead simple, employing only two Spring-inspired annotations with only the most basic options. Iroh is well-tested, comes with samples, provides a complete sample project, and implements optional **lazy injection** for injected components, a rare feature among DI containers.
 
