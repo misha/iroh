@@ -10,7 +10,7 @@ Iroh is implemented using AspectJ. Check out the example POM [here](https://gith
 <dependency>
     <groupId>com.github.msoliter</groupId>
     <artifactId>iroh</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
