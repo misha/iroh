@@ -26,11 +26,24 @@ import com.github.msoliter.iroh.container.exceptions.NoZeroArgumentConstructorEx
 import com.github.msoliter.iroh.container.exceptions.NonConcreteComponentTypeException;
 import com.github.msoliter.iroh.container.sources.base.Source;
 
+/**
+ * Represents a source of instances built because of a type carrying an
+ * {@link com.github.msoliter.iroh.container.annotations.Component} annotation.
+ */
 public class TypeSource extends Source {
     
+    /**
+     * Builds a source from the given type.
+     * 
+     * @param type The type for which to build a source.
+     */
     public TypeSource(Class<?> type) {
         super(type.getAnnotation(Component.class), type);
 
+        /**
+         * It's illegal to make sources from non-concrete types because we'll
+         * never be able to instantiate them anyway.
+         */
         if (!isConcrete(type.getModifiers())) {
             throw new NonConcreteComponentTypeException(type);
         }
@@ -48,6 +61,12 @@ public class TypeSource extends Source {
         }
     }
     
+    /**
+     * Checks whether or not the modifiers represent a concrete type.
+     * 
+     * @param modifiers The type's modifiers.
+     * @return True if the type is concrete, false otherwise.
+     */
     private final static boolean isConcrete(int modifiers) {
         return
             !Modifier.isAbstract(modifiers) &&

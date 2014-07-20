@@ -18,10 +18,9 @@
  */
 package com.github.msoliter.iroh.container.exceptions;
 
-import java.util.Collection;
-
 import com.github.msoliter.iroh.container.exceptions.base.IrohException;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 /**
  * Represents an exception thrown when a base type is 
@@ -52,15 +51,15 @@ public class UnexpectedImplementationCountException extends IrohException {
      */
     public UnexpectedImplementationCountException(
         Class<?> type, 
-        Collection<Class<?>> implementations) {
+        Iterable<Class<?>> implementations) {
         
         super(
-            (implementations.size() == 0) ?
+            (Iterables.size(implementations) == 0) ?
                 String.format(zeroImplementationsFormat, type) :
                 String.format(
                     multipleImplementationsFormat, 
                     type, 
-                    implementations.size(), 
+                    Iterables.size(implementations), 
                     Joiner.on(", ").join(implementations)));
     }
 }

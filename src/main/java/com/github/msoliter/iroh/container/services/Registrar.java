@@ -28,7 +28,7 @@ import com.github.msoliter.iroh.container.annotations.Autowired;
 import com.github.msoliter.iroh.container.annotations.Component;
 import com.github.msoliter.iroh.container.exceptions.DependencyCycleException;
 import com.github.msoliter.iroh.container.exceptions.UnexpectedImplementationCountException;
-import com.github.msoliter.iroh.container.resolvers.base.DependencyResolver;
+import com.github.msoliter.iroh.container.resolvers.base.Resolver;
 import com.github.msoliter.iroh.container.sources.MethodSource;
 import com.github.msoliter.iroh.container.sources.TypeSource;
 import com.github.msoliter.iroh.container.sources.base.Source;
@@ -39,7 +39,7 @@ import com.github.msoliter.iroh.container.sources.base.Source;
  * it iterates over a constant set of dependency resolvers that implement
  * individual resolution strategies, so a registrar can also be thought of as
  * one big 
- * {@link com.github.msoliter.iroh.container.resolvers.base.DependencyResolver}
+ * {@link com.github.msoliter.iroh.container.resolvers.base.Resolver}
  * implementation. However, on top of this implementation, it adds a layer of 
  * error checking that transcends the scope of the dependency resolvers. 
  * Specifically, this is the class responsible for identifying dependency 
@@ -50,7 +50,7 @@ public class Registrar {
 
     /* The set of dependency resolvers used by the registrar to translate types
      * into instance sources. */
-    private final DependencyResolver[] resolvers;
+    private final Resolver[] resolvers;
 
     /* A constant representing the fact that no implementations were found for
      * a particular type. Strictly used for exceptions, and because Effective
@@ -64,7 +64,7 @@ public class Registrar {
      * @param resolvers The resolver this registrar will use to translate types
      *  into instance sources.
      */
-    public Registrar(DependencyResolver... resolvers) {
+    public Registrar(Resolver... resolvers) {
         this.resolvers = resolvers;
     }
     
@@ -118,7 +118,7 @@ public class Registrar {
          * resolution implementations, throwing an error if all of them fail to
          * come up with a source for the field.
          */
-        for (DependencyResolver resolver : resolvers) {
+        for (Resolver resolver : resolvers) {
             Source source = resolver.resolve(field);
             
             /**
@@ -153,7 +153,7 @@ public class Registrar {
          * As promised, the registrar simply abstracts away internal resolvers
          * by iterating over them during the registration process.
          */
-        for (DependencyResolver resolver : resolvers) {
+        for (Resolver resolver : resolvers) {
             resolver.register(source);
         }
         

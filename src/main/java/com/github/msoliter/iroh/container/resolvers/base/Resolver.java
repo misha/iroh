@@ -22,9 +22,25 @@ import java.lang.reflect.Field;
 
 import com.github.msoliter.iroh.container.sources.base.Source;
 
-public interface DependencyResolver {
+/**
+ * Represents a type capable of resolving fields into sources. The resolver is
+ * always informed ahead of time of all the sources in the system.
+ */
+public interface Resolver {
     
+    /**
+     * Register a source with this resolver.
+     * 
+     * @param source The source to register.
+     */
     public void register(Source source);
 
+    /**
+     * Resolve a field into a source using this resolver's strategy.
+     * 
+     * @param field The field to be resolved.
+     * @return The resolved source, or null if the resolver was unable to find
+     *  an acceptable source for the given field.
+     */
     public Source resolve(Field field);
 }

@@ -28,8 +28,8 @@ import org.aspectj.lang.reflect.FieldSignature;
 import org.reflections.Reflections;
 
 import com.github.msoliter.iroh.container.annotations.Component;
-import com.github.msoliter.iroh.container.resolvers.QualifiedDependencyResolver;
-import com.github.msoliter.iroh.container.resolvers.SubclassDependencyResolver;
+import com.github.msoliter.iroh.container.resolvers.QualifiedResolver;
+import com.github.msoliter.iroh.container.resolvers.SubclassResolver;
 import com.github.msoliter.iroh.container.services.Injector;
 import com.github.msoliter.iroh.container.services.Registrar;
 
@@ -43,8 +43,8 @@ public class IrohAspect {
         
     /* A registrar responsible for managing all registered components. */
     private final Registrar registrar = new Registrar(
-        new QualifiedDependencyResolver(),
-        new SubclassDependencyResolver());
+        new QualifiedResolver(),
+        new SubclassResolver());
     
     /* An injector featuring lazy and eager injection methods. */
     private final Injector injector = new Injector(registrar);

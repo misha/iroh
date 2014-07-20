@@ -23,12 +23,27 @@ import java.lang.reflect.Method;
 import com.github.msoliter.iroh.container.annotations.Component;
 import com.github.msoliter.iroh.container.sources.base.Source;
 
+/**
+ * Represents a source of instances built from a method annotated with 
+ * {@link com.github.msoliter.iroh.container.annotations.Component}.
+ */
 public class MethodSource extends Source {
 
+    /* The method on which the annotation was placed. */
     private final Method method;
     
+    /* The source of the type that placed the annotated on the method. Only
+     * component types may have component methods. */
     private final Source declarer;
     
+    /**
+     * Builds a method source of instances that calls the method to create 
+     * instances of that method's return type.
+     * 
+     * @param declarer The source of the type declaring the method.
+     * @param method The method to be used to build instances of that method's
+     *  return type.
+     */
     public MethodSource(Source declarer, Method method) {
         super(method.getAnnotation(Component.class), method.getReturnType());
         this.method = method;
