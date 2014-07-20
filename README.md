@@ -1,4 +1,4 @@
-# Iroh [![Build Status](https://travis-ci.org/msoliter/iroh.svg?branch=master)](https://travis-ci.org/msoliter/iroh)
+# Iroh [![Build Status](https://travis-ci.org/msoliter/iroh.svg?branch=master)](https://travis-ci.org/msoliter/iroh) [![Coverage Status](https://img.shields.io/coveralls/msoliter/iroh.svg)](https://coveralls.io/r/msoliter/iroh?branch=master)
 
 Iroh is a lightweight, principled dependency injection container. Its system is dead simple, employing only two Spring-inspired annotations with only the most basic options. Iroh is well-tested, comes with samples, provides a complete sample project, and implements optional **lazy injection** for injected components, a rare feature among DI containers.
 
@@ -135,6 +135,10 @@ public @interface Autowired {
     public boolean lazy() default false;
 }
 ```
+
+## Testing
+
+Check out the repository, run ```mvn clean test```. Note that Iroh will never reach 100% code coverage because it throws exceptions during JVM initialization if certain errors are detected ([dependency cycles](https://github.com/msoliter/iroh/blob/master/src/test/java/com/github/msoliter/iroh/tests/DependencyCycleTest.java), [duplicate qualifiers](https://github.com/msoliter/iroh/blob/master/src/test/java/com/github/msoliter/iroh/tests/DuplicateQualifierTest.java), etc.) making it impossible to write unit tests for. But rest assured, the unit tests are written, the testing framework is simply insufficiently powerful enough to drive them.
 
 ## Background
 
