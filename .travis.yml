@@ -4,6 +4,5 @@ cache:
 notifications:
   email:
     - msoliter@gmail.com
-script: "mvn clean test -B"
-after_success:
+script:
   - mvn clean cobertura:cobertura coveralls:cobertura
