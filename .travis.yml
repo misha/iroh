@@ -1,4 +1,6 @@
 language: java
+cache:
+  - $HOME/.m2
 notifications:
   email:
     - msoliter@gmail.com
