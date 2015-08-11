@@ -1,8 +1,8 @@
-# Iroh [![Build Status](https://travis-ci.org/msoliter/iroh.svg?branch=master)](https://travis-ci.org/msoliter/iroh) [![Coverage Status](https://img.shields.io/coveralls/msoliter/iroh.svg)](https://coveralls.io/r/msoliter/iroh?branch=master)
+# Iroh [![Build Status](https://travis-ci.org/misha/iroh.svg?branch=master)](https://travis-ci.org/misha/iroh) [![Coverage Status](https://img.shields.io/coveralls/misha/iroh.svg)](https://coveralls.io/r/misha/iroh?branch=master)
 
 Iroh is a lightweight, principled dependency injection container. Its system is dead simple, employing only two Spring-inspired annotations with only the most basic options. Iroh is well-tested, comes with samples, provides a complete sample project, and implements optional **lazy injection** for injected components, a rare feature among DI containers.
 
-Iroh is implemented using AspectJ. Check out the example POM [here](https://github.com/msoliter/iroh/blob/master/example/pom.xml) for details on how to integrate with Maven.
+Iroh is implemented using AspectJ. Check out the example POM [here](https://github.com/misha/iroh/blob/master/example/pom.xml) for details on how to integrate with Maven.
 
 ## Usage
 
@@ -138,7 +138,7 @@ public @interface Autowired {
 
 ## Testing
 
-Check out the repository, run ```mvn clean test```. Note that Iroh will never reach 100% code coverage because it throws exceptions during JVM initialization if certain errors are detected ([dependency cycles](https://github.com/msoliter/iroh/blob/master/src/test/java/com/github/msoliter/iroh/tests/DependencyCycleTest.java), [duplicate qualifiers](https://github.com/msoliter/iroh/blob/master/src/test/java/com/github/msoliter/iroh/tests/DuplicateQualifierTest.java), etc.) making it impossible to write unit tests for. But rest assured, the unit tests are written, the testing framework is simply insufficiently powerful enough to drive them.
+Check out the repository, run ```mvn clean test```. Note that Iroh will never reach 100% code coverage because it throws exceptions during JVM initialization if certain errors are detected ([dependency cycles](https://github.com/misha/iroh/blob/master/src/test/java/com/github/msoliter/iroh/tests/DependencyCycleTest.java), [duplicate qualifiers](https://github.com/misha/iroh/blob/master/src/test/java/com/github/msoliter/iroh/tests/DuplicateQualifierTest.java), etc.) making it impossible to write unit tests for. But rest assured, the unit tests are written, the testing framework is simply insufficiently powerful enough to drive them.
 
 ## Background
 
@@ -148,11 +148,11 @@ I wrote Iroh after six months of learning and developing with dependency injecti
 
 **Should you use Iroh to learn dependency injection, and then move to a more stable container?** Absolutely. Iroh's no-frills approach will greatly accelerate your learning process.
 
-**Can I contribute?** There's not much *to* contribute, aside from more examples and tests. All the features I wanted to implement are implemented. If you find a bug, feel free to report it, [open an issue](https://github.com/msoliter/iroh/issues/new), or better yet, write a test for it and open a pull request.
+**Can I contribute?** There's not much *to* contribute, aside from more examples and tests. All the features I wanted to implement are implemented. If you find a bug, feel free to report it, [open an issue](https://github.com/misha/iroh/issues/new), or better yet, write a test for it and open a pull request.
 
 **Iroh?** My favorite TLA character. Learning dependency injection should be as easy as a cup of tea.
 
 ## Questions, Comments
 
-If you have questions or comments, feel free to e-mail [me](https://github.com/msoliter).
+If you have questions or comments, feel free to e-mail [me](https://github.com/misha).
 
